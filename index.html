@@ -5,12 +5,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="robots" content="noindex">
-<link rel="icon" href="/favicon.ico?v=2" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
-<link rel="manifest" href="/site.webmanifest?v=2">
-<meta name="theme-color" content="#0B5FA5">
+<link rel="icon" type="image/png" href="logo-vip.png">
+<link rel="apple-touch-icon" href="logo-vip.png">
 <title>Registro de paciente — VIP Salud Ocupacional</title>
 <style>
   :root{
@@ -508,6 +504,100 @@
   .selector-buscable-vacio{padding:12px;color:var(--gris-suave);font-size:13px;text-align:center;}
   .selector-buscable-ayuda{margin-top:5px;font-size:12px;color:var(--gris-suave);}
 
+  .alerta-foto-importante{
+    margin:12px 0 14px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:#FFF7E0;
+    border:1.5px solid #F2C037;
+    color:#5C4400;
+    font-size:13px;
+    line-height:1.45;
+    font-weight:700;
+  }
+  .ejemplo-vip-final{
+    margin:12px 0 14px;
+    padding:12px;
+    border:1.5px solid var(--borde);
+    border-radius:12px;
+    background:#FAFBFC;
+  }
+  .ejemplo-vip-final strong{
+    display:block;
+    color:var(--azul-osc);
+    margin-bottom:8px;
+    font-size:13px;
+  }
+  .preview-vip-fondo{
+    position:relative;
+    width:100%;
+    max-width:240px;
+    margin:0 auto 10px;
+    aspect-ratio: 9 / 16;
+    border-radius:14px;
+    overflow:hidden;
+    background:url('fondo-camara-vip.png') center/cover no-repeat;
+    box-shadow:0 6px 16px rgba(0,0,0,.08);
+  }
+  .preview-vip-fondo::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(to bottom, rgba(255,255,255,.12), rgba(255,255,255,.02));
+  }
+  .preview-vip-ovalo{
+    position:absolute;
+    top:22%;
+    left:50%;
+    transform:translateX(-50%);
+    width:48%;
+    height:31%;
+    border:3px dashed rgba(11,95,165,.72);
+    border-radius:50%;
+    z-index:2;
+  }
+  .preview-vip-rostro{
+    position:absolute;
+    top:27%;
+    left:50%;
+    transform:translateX(-50%);
+    width:30%;
+    height:20%;
+    border-radius:50% 50% 46% 46%;
+    background:rgba(11,95,165,.20);
+    border:2px solid rgba(11,95,165,.45);
+    z-index:2;
+  }
+  .preview-vip-hombros{
+    position:absolute;
+    top:43%;
+    left:50%;
+    transform:translateX(-50%);
+    width:42%;
+    height:16%;
+    border-radius:50% 50% 18% 18%;
+    background:rgba(11,95,165,.18);
+    border:2px solid rgba(11,95,165,.32);
+    z-index:2;
+  }
+  .instrucciones-foto-lista{
+    margin:0;
+    padding-left:18px;
+    color:var(--gris-suave);
+    font-size:13px;
+    line-height:1.5;
+  }
+  .procesando-foto{
+    margin-top:10px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:var(--azul-claro);
+    color:var(--azul-osc);
+    font-size:13px;
+    font-weight:700;
+    text-align:center;
+  }
+
   @media (prefers-reduced-motion:reduce){
     .wrap,.paso.activo{animation:none!important;}
     html{scroll-behavior:auto!important;}
@@ -890,14 +980,33 @@
         </div>
       </div>
 
+      <div class="alerta-foto-importante">⚠️ <strong>Importante:</strong> no tome foto a la cédula. La foto correcta muestra <strong>su rostro dentro del óvalo</strong> y luego el sistema pondrá automáticamente el <strong>fondo VIP</strong>.</div>
+
+      <div class="ejemplo-vip-final">
+        <strong>Así debe verse la foto final:</strong>
+        <div class="preview-vip-fondo" aria-hidden="true">
+          <div class="preview-vip-ovalo"></div>
+          <div class="preview-vip-rostro"></div>
+          <div class="preview-vip-hombros"></div>
+        </div>
+        <ul class="instrucciones-foto-lista">
+          <li>Ubique su cara completa dentro del óvalo.</li>
+          <li>Mire de frente a la cámara.</li>
+          <li>No use la cédula ni apunte la cámara al documento.</li>
+          <li>La foto se guardará con el fondo institucional de VIP.</li>
+        </ul>
+      </div>
+
       <div class="foto-box">
         <div class="guia-ovalo" id="guiaOvalo"></div>
         <video id="video" autoplay playsinline></video>
-        <img id="fotoResultado" alt="Su foto">
+        <img id="fotoResultado" alt="Su foto con fondo VIP">
         <canvas id="canvasFoto"></canvas>
+        <img id="fondoVipCaptura" src="fondo-camara-vip.png" alt="" class="oculto">
         <button type="button" class="btn btn-azul" id="btnAbrirCamara">📷 Abrir la cámara</button>
-        <button type="button" class="btn btn-azul oculto" id="btnCapturar" style="margin-top:10px;">Tomar la foto</button>
+        <button type="button" class="btn btn-azul oculto" id="btnCapturar" style="margin-top:10px;">✨ Tomar foto con fondo VIP</button>
         <button type="button" class="btn btn-gris oculto" id="btnRepetirFoto" style="margin-top:10px;">Repetir la foto</button>
+        <div class="procesando-foto oculto" id="procesandoFoto">🪄 Preparando la foto con el fondo VIP...</div>
       </div>
       <div class="msg-error" id="errorFoto">Tome su foto antes de continuar.</div>
 
@@ -961,6 +1070,7 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"></script>
 <script>
 /* ===================== CONFIGURACIÓN ===================== */
 // IMPORTANTE: se conserva el Apps Script antiguo porque guarda el registro, las imágenes y envía los correos.
@@ -1830,7 +1940,88 @@ const fotoResultado = document.getElementById('fotoResultado');
 const btnAbrirCamara = document.getElementById('btnAbrirCamara');
 const btnCapturar = document.getElementById('btnCapturar');
 const btnRepetirFoto = document.getElementById('btnRepetirFoto');
+const procesandoFoto = document.getElementById('procesandoFoto');
+const fondoVipCaptura = document.getElementById('fondoVipCaptura');
 let fotoBase64 = '';
+let selfieSegmentation = null;
+
+function detenerCamara(){
+  if(streamCamara){
+    streamCamara.getTracks().forEach(t => t.stop());
+    streamCamara = null;
+  }
+}
+
+async function inicializarSelfieSegmentation(){
+  if(selfieSegmentation) return selfieSegmentation;
+  if(typeof SelfieSegmentation === 'undefined'){
+    throw new Error('La librería de segmentación no se cargó correctamente.');
+  }
+  selfieSegmentation = new SelfieSegmentation({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
+  });
+  selfieSegmentation.setOptions({ modelSelection: 1 });
+  return selfieSegmentation;
+}
+
+function dibujarImagenCubierta(ctx, img, dx, dy, dw, dh){
+  const iw = img.videoWidth || img.naturalWidth || img.width;
+  const ih = img.videoHeight || img.naturalHeight || img.height;
+  if(!iw || !ih) return;
+  const escala = Math.max(dw / iw, dh / ih);
+  const nw = iw * escala;
+  const nh = ih * escala;
+  const nx = dx + (dw - nw) / 2;
+  const ny = dy + (dh - nh) / 2;
+  ctx.drawImage(img, nx, ny, nw, nh);
+}
+
+async function capturarFotoConFondoVip(){
+  const segmentador = await inicializarSelfieSegmentation();
+  const frameCanvas = document.createElement('canvas');
+  frameCanvas.width = video.videoWidth;
+  frameCanvas.height = video.videoHeight;
+  const frameCtx = frameCanvas.getContext('2d');
+  frameCtx.drawImage(video, 0, 0, frameCanvas.width, frameCanvas.height);
+
+  return new Promise(async (resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('La foto tardó demasiado en procesarse.')), 12000);
+    segmentador.onResults((results) => {
+      clearTimeout(timeout);
+      try{
+        const salidaW = 900;
+        const salidaH = 1600;
+        canvasFoto.width = salidaW;
+        canvasFoto.height = salidaH;
+        const ctx = canvasFoto.getContext('2d');
+        ctx.clearRect(0, 0, salidaW, salidaH);
+
+        dibujarImagenCubierta(ctx, fondoVipCaptura, 0, 0, salidaW, salidaH);
+
+        const mascaraCanvas = document.createElement('canvas');
+        mascaraCanvas.width = salidaW;
+        mascaraCanvas.height = salidaH;
+        const mascaraCtx = mascaraCanvas.getContext('2d');
+        mascaraCtx.drawImage(results.segmentationMask, 0, 0, salidaW, salidaH);
+        mascaraCtx.globalCompositeOperation = 'source-in';
+        dibujarImagenCubierta(mascaraCtx, frameCanvas, 0, 0, salidaW, salidaH);
+        mascaraCtx.globalCompositeOperation = 'source-over';
+
+        ctx.drawImage(mascaraCanvas, 0, 0, salidaW, salidaH);
+        resolve(canvasFoto.toDataURL('image/jpeg', 0.92));
+      }catch(err){
+        reject(err);
+      }
+    });
+
+    try{
+      await segmentador.send({ image: frameCanvas });
+    }catch(error){
+      clearTimeout(timeout);
+      reject(error);
+    }
+  });
+}
 
 btnAbrirCamara.addEventListener('click', async () => {
   try{
@@ -1839,6 +2030,8 @@ btnAbrirCamara.addEventListener('click', async () => {
     video.style.display = 'block';
     btnAbrirCamara.classList.add('oculto');
     btnCapturar.classList.remove('oculto');
+    btnRepetirFoto.classList.add('oculto');
+    procesandoFoto.classList.add('oculto');
     fotoResultado.style.display = 'none';
     document.querySelector('.foto-box').classList.add('camara-activa');
   }catch(e){
@@ -1846,17 +2039,36 @@ btnAbrirCamara.addEventListener('click', async () => {
   }
 });
 
-btnCapturar.addEventListener('click', () => {
-  canvasFoto.width = video.videoWidth;
-  canvasFoto.height = video.videoHeight;
-  canvasFoto.getContext('2d').drawImage(video, 0, 0);
-  fotoBase64 = canvasFoto.toDataURL('image/jpeg', 0.85);
+btnCapturar.addEventListener('click', async () => {
+  if(!video.videoWidth || !video.videoHeight){
+    alert('Espere un momento a que la cámara cargue completamente.');
+    return;
+  }
+
+  btnCapturar.disabled = true;
+  btnRepetirFoto.disabled = true;
+  procesandoFoto.classList.remove('oculto');
+
+  try{
+    fotoBase64 = await capturarFotoConFondoVip();
+  }catch(error){
+    console.error(error);
+    canvasFoto.width = video.videoWidth;
+    canvasFoto.height = video.videoHeight;
+    canvasFoto.getContext('2d').drawImage(video, 0, 0);
+    fotoBase64 = canvasFoto.toDataURL('image/jpeg', 0.85);
+    alert('No fue posible aplicar el fondo VIP automáticamente en este intento. Se guardó la foto normal. Si desea, puede repetirla.');
+  }
+
   fotoResultado.src = fotoBase64;
   fotoResultado.style.display = 'block';
   video.style.display = 'none';
-  if(streamCamara) streamCamara.getTracks().forEach(t => t.stop());
+  detenerCamara();
   btnCapturar.classList.add('oculto');
+  btnCapturar.disabled = false;
+  btnRepetirFoto.disabled = false;
   btnRepetirFoto.classList.remove('oculto');
+  procesandoFoto.classList.add('oculto');
   fotoTomada = true;
   document.getElementById('errorFoto').style.display = 'none';
   document.querySelector('.foto-box').classList.remove('camara-activa');
@@ -1864,7 +2076,9 @@ btnCapturar.addEventListener('click', () => {
 
 btnRepetirFoto.addEventListener('click', () => {
   fotoTomada = false;
+  fotoBase64 = '';
   fotoResultado.style.display = 'none';
+  procesandoFoto.classList.add('oculto');
   btnRepetirFoto.classList.add('oculto');
   btnAbrirCamara.classList.remove('oculto');
 });

@@ -1,3 +1,3 @@
-Versión 1.1.0
-Fecha: 2026-08-04
-Corrección: favicon/logo visible en la pestaña del navegador.
+1.1.0
+- Fondo VIP automático en captura de foto
+- Mejoras visuales de guía para el usuario
