@@ -641,8 +641,9 @@
     margin-left:auto;
     margin-right:auto;
     object-fit:contain;
-    border-radius:12px;
+    border-radius:16px;
     background:#EEF3F7;
+    box-shadow:0 8px 24px rgba(0,0,0,.10);
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -1038,7 +1039,7 @@
         <button type="button" class="btn btn-azul" id="btnAbrirCamara">📷 Abrir la cámara</button>
         <button type="button" class="btn btn-azul oculto" id="btnCapturar" style="margin-top:10px;">📸 Capturar mi rostro</button>
         <button type="button" class="btn btn-gris oculto" id="btnRepetirFoto" style="margin-top:10px;">Repetir la foto</button>
-        <div class="procesando-foto oculto" id="procesandoFoto">🪄 Separando su imagen y aplicando el fondo VIP...</div>
+        <div class="procesando-foto oculto" id="procesandoFoto">🪄 Preparando su foto con fondo desenfocado VIP...</div>
       </div>
       <div class="msg-error" id="errorFoto">Tome su foto antes de continuar.</div>
 
@@ -2104,6 +2105,86 @@ function crearMascaraPersona(segmentacion){
   return mascara;
 }
 
+
+function dibujarMarcoVip(ctx, ancho, alto){
+  const borde = Math.max(10, Math.round(Math.min(ancho, alto) * 0.02));
+  const radio = Math.max(16, Math.round(Math.min(ancho, alto) * 0.045));
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.35)';
+  ctx.lineWidth = Math.max(2, Math.round(borde * 0.22));
+  trazarRectRedondeado(ctx, borde, borde, ancho - borde * 2, alto - borde * 2, radio);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function trazarRectRedondeado(ctx, x, y, w, h, r){
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rr, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rr);
+  ctx.arcTo(x + w, y + h, x, y + h, rr);
+  ctx.arcTo(x, y + h, x, y, rr);
+  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.closePath();
+}
+
+function dibujarFondoDesenfocado(ctx, fuente, ancho, alto){
+  ctx.save();
+  if('filter' in ctx) ctx.filter = 'blur(18px) saturate(1.02) brightness(0.96)';
+  dibujarImagenCubierta(ctx, fuente, -24, -24, ancho + 48, alto + 48);
+  ctx.restore();
+
+  const velo = ctx.createLinearGradient(0, 0, 0, alto);
+  velo.addColorStop(0, 'rgba(255,255,255,.08)');
+  velo.addColorStop(.45, 'rgba(255,255,255,.02)');
+  velo.addColorStop(1, 'rgba(8,62,110,.10)');
+  ctx.fillStyle = velo;
+  ctx.fillRect(0, 0, ancho, alto);
+}
+
+function aplicarDesenfoqueRetratoSimple(salidaW, salidaH, fotograma){
+  canvasFoto.width = salidaW;
+  canvasFoto.height = salidaH;
+  const ctx = canvasFoto.getContext('2d', { alpha:false });
+  ctx.clearRect(0,0,salidaW,salidaH);
+
+  dibujarFondoDesenfocado(ctx, fotograma, salidaW, salidaH);
+
+  const focoW = Math.round(salidaW * 0.62);
+  const focoH = Math.round(salidaH * 0.78);
+  const focoX = Math.round((salidaW - focoW) / 2);
+  const focoY = Math.round((salidaH - focoH) * 0.26);
+
+  const mascara = document.createElement('canvas');
+  mascara.width = salidaW;
+  mascara.height = salidaH;
+  const mctx = mascara.getContext('2d');
+  const grad = mctx.createRadialGradient(
+    salidaW / 2, focoY + focoH * 0.36, focoW * 0.10,
+    salidaW / 2, focoY + focoH * 0.42, focoW * 0.60
+  );
+  grad.addColorStop(0, 'rgba(255,255,255,1)');
+  grad.addColorStop(0.68, 'rgba(255,255,255,.96)');
+  grad.addColorStop(0.9, 'rgba(255,255,255,.24)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  mctx.fillStyle = grad;
+  mctx.fillRect(0, 0, salidaW, salidaH);
+
+  const nitido = document.createElement('canvas');
+  nitido.width = salidaW;
+  nitido.height = salidaH;
+  const nctx = nitido.getContext('2d');
+  dibujarImagenCubierta(nctx, fotograma, 0, 0, salidaW, salidaH);
+  nctx.globalCompositeOperation = 'destination-in';
+  nctx.drawImage(mascara, 0, 0);
+  nctx.globalCompositeOperation = 'source-over';
+
+  ctx.drawImage(nitido, 0, 0);
+  dibujarMarcaVip(ctx, salidaW, salidaH);
+  dibujarMarcoVip(ctx, salidaW, salidaH);
+  return canvasFoto.toDataURL('image/jpeg', 0.90);
+}
+
 function dibujarMarcaVip(ctx, ancho, alto){
   if(logoVipCaptura && logoVipCaptura.naturalWidth){
     const cajaW = Math.round(ancho * 0.20);
@@ -2141,11 +2222,12 @@ function crearFotoNormalConMarca(){
   const ctx = canvasFoto.getContext('2d', { alpha:false });
   ctx.drawImage(video, 0, 0, salida.ancho, salida.alto);
   dibujarMarcaVip(ctx, salida.ancho, salida.alto);
+  dibujarMarcoVip(ctx, salida.ancho, salida.alto);
   return canvasFoto.toDataURL('image/jpeg', 0.88);
 }
 
 async function capturarFotoConFondoVip(){
-  await Promise.all([esperarImagen(fondoVipCaptura), esperarImagen(logoVipCaptura)]);
+  await Promise.all([esperarImagen(logoVipCaptura)]);
 
   const origenW = video.videoWidth;
   const origenH = video.videoHeight;
@@ -2153,70 +2235,60 @@ async function capturarFotoConFondoVip(){
   const salidaW = salida.ancho;
   const salidaH = salida.alto;
 
-  // Copia exacta del fotograma: conserva proporción y evita ampliar o deformar la cara.
   const fotograma = document.createElement('canvas');
   fotograma.width = origenW;
   fotograma.height = origenH;
   fotograma.getContext('2d').drawImage(video, 0, 0, origenW, origenH);
 
-  const modelo = await obtenerModeloBodyPix();
-  const segmentacion = await modelo.segmentPerson(fotograma, {
-    internalResolution: 'medium',
-    segmentationThreshold: 0.72,
-    maxDetections: 1,
-    scoreThreshold: 0.30,
-    nmsRadius: 20
-  });
+  try{
+    const modelo = await obtenerModeloBodyPix();
+    const segmentacion = await modelo.segmentPerson(fotograma, {
+      internalResolution: 'medium',
+      segmentationThreshold: 0.68,
+      maxDetections: 1,
+      scoreThreshold: 0.25,
+      nmsRadius: 20
+    });
 
-  canvasFoto.width = salidaW;
-  canvasFoto.height = salidaH;
-  const ctx = canvasFoto.getContext('2d', { alpha:false });
+    canvasFoto.width = salidaW;
+    canvasFoto.height = salidaH;
+    const ctx = canvasFoto.getContext('2d', { alpha:false });
+    dibujarFondoDesenfocado(ctx, fotograma, salidaW, salidaH);
 
-  // Fondo institucional VIP completo, suavizado para que la persona destaque.
-  ctx.save();
-  if('filter' in ctx) ctx.filter = 'blur(4px) brightness(1.03) saturate(.92)';
-  dibujarImagenCubierta(ctx, fondoVipCaptura, -10, -10, salidaW + 20, salidaH + 20);
-  ctx.restore();
+    const mascaraOriginal = crearMascaraPersona(segmentacion);
+    const mascaraSuave = document.createElement('canvas');
+    mascaraSuave.width = salidaW;
+    mascaraSuave.height = salidaH;
+    const mascaraCtx = mascaraSuave.getContext('2d');
+    mascaraCtx.save();
+    if('filter' in mascaraCtx) mascaraCtx.filter = 'blur(2px)';
+    mascaraCtx.drawImage(mascaraOriginal, 0, 0, salidaW, salidaH);
+    mascaraCtx.restore();
 
-  const velo = ctx.createLinearGradient(0, 0, salidaW, salidaH);
-  velo.addColorStop(0, 'rgba(255,255,255,.06)');
-  velo.addColorStop(.55, 'rgba(255,255,255,.02)');
-  velo.addColorStop(1, 'rgba(255,255,255,.10)');
-  ctx.fillStyle = velo;
-  ctx.fillRect(0, 0, salidaW, salidaH);
+    const nitida = document.createElement('canvas');
+    nitida.width = salidaW;
+    nitida.height = salidaH;
+    const nitidaCtx = nitida.getContext('2d');
+    dibujarImagenCubierta(nitidaCtx, fotograma, 0, 0, salidaW, salidaH);
+    nitidaCtx.globalCompositeOperation = 'destination-in';
+    nitidaCtx.drawImage(mascaraSuave, 0, 0, salidaW, salidaH);
+    nitidaCtx.globalCompositeOperation = 'source-over';
 
-  const mascaraOriginal = crearMascaraPersona(segmentacion);
-  const mascaraSuave = document.createElement('canvas');
-  mascaraSuave.width = salidaW;
-  mascaraSuave.height = salidaH;
-  const mascaraCtx = mascaraSuave.getContext('2d');
-  mascaraCtx.save();
-  if('filter' in mascaraCtx) mascaraCtx.filter = 'blur(4px)';
-  mascaraCtx.drawImage(mascaraOriginal, 0, 0, salidaW, salidaH);
-  mascaraCtx.restore();
+    ctx.drawImage(nitida, 0, 0);
 
-  // Sombra mínima para integrar a la persona con el fondo sin crear un halo blanco.
-  ctx.save();
-  ctx.globalAlpha = .18;
-  if('filter' in ctx) ctx.filter = 'blur(12px)';
-  ctx.drawImage(mascaraSuave, 4, 8, salidaW, salidaH);
-  ctx.globalCompositeOperation = 'source-in';
-  ctx.fillStyle = '#173A56';
-  ctx.fillRect(0, 0, salidaW, salidaH);
-  ctx.restore();
+    const gradLuz = ctx.createLinearGradient(0, 0, salidaW, salidaH);
+    gradLuz.addColorStop(0, 'rgba(255,255,255,.04)');
+    gradLuz.addColorStop(1, 'rgba(255,255,255,.10)');
+    ctx.fillStyle = gradLuz;
+    ctx.fillRect(0, 0, salidaW, salidaH);
 
-  const persona = document.createElement('canvas');
-  persona.width = salidaW;
-  persona.height = salidaH;
-  const personaCtx = persona.getContext('2d');
-  personaCtx.drawImage(fotograma, 0, 0, salidaW, salidaH);
-  personaCtx.globalCompositeOperation = 'destination-in';
-  personaCtx.drawImage(mascaraSuave, 0, 0);
-  personaCtx.globalCompositeOperation = 'source-over';
-  ctx.drawImage(persona, 0, 0);
-
-  dibujarMarcaVip(ctx, salidaW, salidaH);
-  return canvasFoto.toDataURL('image/jpeg', 0.90);
+    dibujarMarcaVip(ctx, salidaW, salidaH);
+    dibujarMarcoVip(ctx, salidaW, salidaH);
+    return canvasFoto.toDataURL('image/jpeg', 0.90);
+  }catch(error){
+    console.warn('No fue posible separar la persona. Se usará desenfoque tipo retrato.', error);
+    return aplicarDesenfoqueRetratoSimple(salidaW, salidaH, fotograma);
+  }
 }
 
 btnAbrirCamara.addEventListener('click', async () => {
