@@ -510,14 +510,14 @@
   .selector-buscable-ayuda{margin-top:5px;font-size:12px;color:var(--gris-suave);}
 
   .alerta-foto-importante{
-    margin:12px 0 14px;
-    padding:12px 14px;
+    margin:10px 0 14px;
+    padding:10px 12px;
     border-radius:10px;
     background:#FFF7E0;
     border:1.5px solid #F2C037;
     color:#5C4400;
     font-size:13px;
-    line-height:1.45;
+    line-height:1.4;
     font-weight:700;
   }
   .ejemplo-vip-final{
@@ -635,12 +635,14 @@
     box-shadow:0 2px 8px rgba(0,0,0,.08);
   }
   #fotoResultado{
-    width:auto;
+    width:100%;
     max-width:100%;
-    max-height:390px;
+    max-height:420px;
     margin-left:auto;
     margin-right:auto;
     object-fit:contain;
+    border-radius:12px;
+    background:#EEF3F7;
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -1025,33 +1027,18 @@
         </div>
       </div>
 
-      <div class="alerta-foto-importante">⚠️ <strong>Importante:</strong> no tome foto a la cédula. La cámara debe mostrar <strong>su cara y parte de sus hombros</strong>. El óvalo es solamente una guía y <strong>no aparecerá en la foto final</strong>.</div>
-
-      <div class="ejemplo-vip-final">
-        <strong>La foto final quedará así:</strong>
-        <div class="preview-vip-fondo preview-vip-blur" aria-hidden="true">
-          <div class="preview-vip-rostro"></div>
-          <div class="preview-vip-hombros"></div>
-          <span class="preview-vip-etiqueta">VIP</span>
-        </div>
-        <ul class="instrucciones-foto-lista">
-          <li>Ubique su cara completa dentro del óvalo.</li>
-          <li>Mire de frente y mantenga el celular quieto.</li>
-          <li>No use la cédula ni apunte la cámara al documento.</li>
-          <li>El fondo real quedará desenfocado y se agregará una identidad VIP suave.</li>
-        </ul>
-      </div>
+      <div class="alerta-foto-importante">⚠️ Tome una foto de <strong>su rostro y hombros</strong>, no de la cédula. Ubíquese dentro del óvalo y mire de frente.</div>
 
       <div class="foto-box">
         <div class="guia-ovalo" id="guiaOvalo"></div>
         <video id="video" autoplay playsinline></video>
-        <img id="fotoResultado" alt="Su foto con fondo desenfocado VIP">
+        <img id="fotoResultado" alt="Su foto con fondo VIP">
         <canvas id="canvasFoto"></canvas>
         <img id="fondoVipCaptura" src="fondo-camara-vip.png" alt="" class="oculto">
         <button type="button" class="btn btn-azul" id="btnAbrirCamara">📷 Abrir la cámara</button>
-        <button type="button" class="btn btn-azul oculto" id="btnCapturar" style="margin-top:10px;">✨ Tomar foto con fondo desenfocado</button>
+        <button type="button" class="btn btn-azul oculto" id="btnCapturar" style="margin-top:10px;">📸 Capturar mi rostro</button>
         <button type="button" class="btn btn-gris oculto" id="btnRepetirFoto" style="margin-top:10px;">Repetir la foto</button>
-        <div class="procesando-foto oculto" id="procesandoFoto">🪄 Preparando la foto con fondo desenfocado VIP...</div>
+        <div class="procesando-foto oculto" id="procesandoFoto">🪄 Separando su imagen y aplicando el fondo VIP...</div>
       </div>
       <div class="msg-error" id="errorFoto">Tome su foto antes de continuar.</div>
 
@@ -1999,7 +1986,6 @@ function dibujarImagenCubierta(ctx, img, dx, dy, dw, dh){
   const iw = img.videoWidth || img.naturalWidth || img.width;
   const ih = img.videoHeight || img.naturalHeight || img.height;
   if(!iw || !ih) throw new Error('La imagen todavía no está lista.');
-
   const escala = Math.max(dw / iw, dh / ih);
   const recorteW = dw / escala;
   const recorteH = dh / escala;
@@ -2028,97 +2014,209 @@ function rutaRectRedondeado(ctx, x, y, w, h, r){
   ctx.closePath();
 }
 
-async function capturarFotoConBlurVip(){
-  await Promise.all([
-    esperarImagen(fondoVipCaptura),
-    esperarImagen(logoVipCaptura)
-  ]);
+let modeloBodyPix = null;
+let promesaModeloBodyPix = null;
 
-  // Formato 3:4: suficientemente nítido y liviano para guardarlo en Drive/BIOFILE.
-  const salidaW = 900;
-  const salidaH = 1200;
-  canvasFoto.width = salidaW;
-  canvasFoto.height = salidaH;
-  const ctx = canvasFoto.getContext('2d', { alpha:false });
-
-  // 1) Fondo tomado de la misma cámara, ampliado y desenfocado.
-  ctx.save();
-  if('filter' in ctx) ctx.filter = 'blur(30px) saturate(.92) brightness(1.04)';
-  dibujarImagenCubierta(ctx, video, -55, -55, salidaW + 110, salidaH + 110);
-  ctx.restore();
-
-  // 2) Capa VIP muy suave para dar identidad sin tapar la foto.
-  if(fondoVipCaptura && fondoVipCaptura.naturalWidth){
-    ctx.save();
-    ctx.globalAlpha = 0.18;
-    dibujarImagenCubierta(ctx, fondoVipCaptura, 0, 0, salidaW, salidaH);
-    ctx.restore();
+function cargarScriptUnaVez(url, id){
+  const existente = document.getElementById(id);
+  if(existente){
+    if(existente.dataset.cargado === 'si') return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      existente.addEventListener('load', resolve, { once:true });
+      existente.addEventListener('error', reject, { once:true });
+    });
   }
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.id = id;
+    script.crossOrigin = 'anonymous';
+    script.onload = () => { script.dataset.cargado = 'si'; resolve(); };
+    script.onerror = () => reject(new Error('No se pudo cargar el módulo de fotografía.'));
+    document.head.appendChild(script);
+  });
+}
 
-  // 3) Imagen nítida en el centro, con bordes difuminados; no queda un óvalo visible.
-  const sujeto = document.createElement('canvas');
-  sujeto.width = salidaW;
-  sujeto.height = salidaH;
-  const sujetoCtx = sujeto.getContext('2d');
-  dibujarImagenCubierta(sujetoCtx, video, 0, 0, salidaW, salidaH);
+async function obtenerModeloBodyPix(){
+  if(modeloBodyPix) return modeloBodyPix;
+  if(promesaModeloBodyPix) return promesaModeloBodyPix;
 
+  promesaModeloBodyPix = (async () => {
+    await cargarScriptUnaVez(
+      'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js',
+      'tfjs-vip'
+    );
+    await cargarScriptUnaVez(
+      'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@4.22.0/dist/tf-backend-wasm.min.js',
+      'tfjs-wasm-vip'
+    );
+    if(!window.tf || !tf.wasm) throw new Error('El motor de fotografía no está disponible.');
+    tf.wasm.setWasmPaths('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@4.22.0/dist/');
+    await tf.setBackend('wasm');
+    await tf.ready();
+    await cargarScriptUnaVez(
+      'https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.1/dist/body-pix.min.js',
+      'bodypix-vip'
+    );
+    if(!window.bodyPix) throw new Error('El recorte de persona no está disponible.');
+    modeloBodyPix = await bodyPix.load({
+      architecture: 'MobileNetV1',
+      outputStride: 16,
+      multiplier: 0.50,
+      quantBytes: 2
+    });
+    return modeloBodyPix;
+  })();
+
+  try{
+    return await promesaModeloBodyPix;
+  }catch(error){
+    promesaModeloBodyPix = null;
+    throw error;
+  }
+}
+
+function dimensionesSalidaFoto(anchoOrigen, altoOrigen){
+  const maxAncho = 1000;
+  const maxAlto = 1200;
+  const escala = Math.min(maxAncho / anchoOrigen, maxAlto / altoOrigen);
+  return {
+    ancho: Math.max(1, Math.round(anchoOrigen * escala)),
+    alto: Math.max(1, Math.round(altoOrigen * escala))
+  };
+}
+
+function crearMascaraPersona(segmentacion){
   const mascara = document.createElement('canvas');
-  mascara.width = salidaW;
-  mascara.height = salidaH;
-  const mascaraCtx = mascara.getContext('2d');
-  mascaraCtx.save();
-  if('filter' in mascaraCtx) mascaraCtx.filter = 'blur(62px)';
-  mascaraCtx.fillStyle = '#fff';
-  rutaRectRedondeado(mascaraCtx, 110, 65, 680, 1090, 260);
-  mascaraCtx.fill();
-  mascaraCtx.restore();
+  mascara.width = segmentacion.width;
+  mascara.height = segmentacion.height;
+  const ctx = mascara.getContext('2d');
+  const imagen = ctx.createImageData(mascara.width, mascara.height);
+  for(let i=0; i<segmentacion.data.length; i++){
+    const p = i * 4;
+    const persona = segmentacion.data[i] === 1;
+    imagen.data[p] = 255;
+    imagen.data[p + 1] = 255;
+    imagen.data[p + 2] = 255;
+    imagen.data[p + 3] = persona ? 255 : 0;
+  }
+  ctx.putImageData(imagen, 0, 0);
+  return mascara;
+}
 
-  sujetoCtx.globalCompositeOperation = 'destination-in';
-  sujetoCtx.drawImage(mascara, 0, 0);
-  sujetoCtx.globalCompositeOperation = 'source-over';
-  ctx.drawImage(sujeto, 0, 0);
-
-  // 4) Velo sutil para que el rostro destaque sin verse recortado.
-  const luz = ctx.createRadialGradient(
-    salidaW / 2, salidaH * 0.40, 70,
-    salidaW / 2, salidaH * 0.40, 500
-  );
-  luz.addColorStop(0, 'rgba(255,255,255,.02)');
-  luz.addColorStop(1, 'rgba(255,255,255,.12)');
-  ctx.fillStyle = luz;
-  ctx.fillRect(0, 0, salidaW, salidaH);
-
-  // 5) Logo VIP discreto en la esquina superior derecha.
+function dibujarMarcaVip(ctx, ancho, alto){
   if(logoVipCaptura && logoVipCaptura.naturalWidth){
+    const cajaW = Math.round(ancho * 0.20);
+    const cajaH = Math.round(cajaW * 0.52);
+    const margen = Math.round(ancho * 0.025);
+    const x = ancho - cajaW - margen;
+    const y = margen;
     ctx.save();
-    ctx.fillStyle = 'rgba(255,255,255,.88)';
-    rutaRectRedondeado(ctx, 665, 28, 205, 112, 28);
+    ctx.fillStyle = 'rgba(255,255,255,.90)';
+    rutaRectRedondeado(ctx, x, y, cajaW, cajaH, Math.round(cajaH * .22));
     ctx.fill();
-    const maxW = 155;
-    const maxH = 72;
+    const maxW = cajaW * .72;
+    const maxH = cajaH * .58;
     const relacion = logoVipCaptura.naturalWidth / logoVipCaptura.naturalHeight;
     let lw = maxW;
     let lh = lw / relacion;
     if(lh > maxH){ lh = maxH; lw = lh * relacion; }
-    ctx.drawImage(logoVipCaptura, 690 + (155 - lw) / 2, 48 + (72 - lh) / 2, lw, lh);
+    ctx.drawImage(
+      logoVipCaptura,
+      x + (cajaW - lw) / 2,
+      y + (cajaH - lh) / 2,
+      lw,
+      lh
+    );
     ctx.restore();
   }
+}
 
-  // 6) Sello inferior limpio.
+function crearFotoNormalConMarca(){
+  const origenW = video.videoWidth;
+  const origenH = video.videoHeight;
+  const salida = dimensionesSalidaFoto(origenW, origenH);
+  canvasFoto.width = salida.ancho;
+  canvasFoto.height = salida.alto;
+  const ctx = canvasFoto.getContext('2d', { alpha:false });
+  ctx.drawImage(video, 0, 0, salida.ancho, salida.alto);
+  dibujarMarcaVip(ctx, salida.ancho, salida.alto);
+  return canvasFoto.toDataURL('image/jpeg', 0.88);
+}
+
+async function capturarFotoConFondoVip(){
+  await Promise.all([esperarImagen(fondoVipCaptura), esperarImagen(logoVipCaptura)]);
+
+  const origenW = video.videoWidth;
+  const origenH = video.videoHeight;
+  const salida = dimensionesSalidaFoto(origenW, origenH);
+  const salidaW = salida.ancho;
+  const salidaH = salida.alto;
+
+  // Copia exacta del fotograma: conserva proporción y evita ampliar o deformar la cara.
+  const fotograma = document.createElement('canvas');
+  fotograma.width = origenW;
+  fotograma.height = origenH;
+  fotograma.getContext('2d').drawImage(video, 0, 0, origenW, origenH);
+
+  const modelo = await obtenerModeloBodyPix();
+  const segmentacion = await modelo.segmentPerson(fotograma, {
+    internalResolution: 'medium',
+    segmentationThreshold: 0.72,
+    maxDetections: 1,
+    scoreThreshold: 0.30,
+    nmsRadius: 20
+  });
+
+  canvasFoto.width = salidaW;
+  canvasFoto.height = salidaH;
+  const ctx = canvasFoto.getContext('2d', { alpha:false });
+
+  // Fondo institucional VIP completo, suavizado para que la persona destaque.
   ctx.save();
-  const banda = ctx.createLinearGradient(0, salidaH - 130, 0, salidaH);
-  banda.addColorStop(0, 'rgba(8,62,110,0)');
-  banda.addColorStop(1, 'rgba(8,62,110,.62)');
-  ctx.fillStyle = banda;
-  ctx.fillRect(0, salidaH - 160, salidaW, 160);
-  ctx.fillStyle = 'rgba(255,255,255,.96)';
-  ctx.font = '700 26px Arial, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('VIP SALUD OCUPACIONAL', salidaW / 2, salidaH - 36);
+  if('filter' in ctx) ctx.filter = 'blur(4px) brightness(1.03) saturate(.92)';
+  dibujarImagenCubierta(ctx, fondoVipCaptura, -10, -10, salidaW + 20, salidaH + 20);
   ctx.restore();
 
-  // JPEG comprimido: mantiene buena calidad y evita archivos demasiado pesados.
-  return canvasFoto.toDataURL('image/jpeg', 0.88);
+  const velo = ctx.createLinearGradient(0, 0, salidaW, salidaH);
+  velo.addColorStop(0, 'rgba(255,255,255,.06)');
+  velo.addColorStop(.55, 'rgba(255,255,255,.02)');
+  velo.addColorStop(1, 'rgba(255,255,255,.10)');
+  ctx.fillStyle = velo;
+  ctx.fillRect(0, 0, salidaW, salidaH);
+
+  const mascaraOriginal = crearMascaraPersona(segmentacion);
+  const mascaraSuave = document.createElement('canvas');
+  mascaraSuave.width = salidaW;
+  mascaraSuave.height = salidaH;
+  const mascaraCtx = mascaraSuave.getContext('2d');
+  mascaraCtx.save();
+  if('filter' in mascaraCtx) mascaraCtx.filter = 'blur(4px)';
+  mascaraCtx.drawImage(mascaraOriginal, 0, 0, salidaW, salidaH);
+  mascaraCtx.restore();
+
+  // Sombra mínima para integrar a la persona con el fondo sin crear un halo blanco.
+  ctx.save();
+  ctx.globalAlpha = .18;
+  if('filter' in ctx) ctx.filter = 'blur(12px)';
+  ctx.drawImage(mascaraSuave, 4, 8, salidaW, salidaH);
+  ctx.globalCompositeOperation = 'source-in';
+  ctx.fillStyle = '#173A56';
+  ctx.fillRect(0, 0, salidaW, salidaH);
+  ctx.restore();
+
+  const persona = document.createElement('canvas');
+  persona.width = salidaW;
+  persona.height = salidaH;
+  const personaCtx = persona.getContext('2d');
+  personaCtx.drawImage(fotograma, 0, 0, salidaW, salidaH);
+  personaCtx.globalCompositeOperation = 'destination-in';
+  personaCtx.drawImage(mascaraSuave, 0, 0);
+  personaCtx.globalCompositeOperation = 'source-over';
+  ctx.drawImage(persona, 0, 0);
+
+  dibujarMarcaVip(ctx, salidaW, salidaH);
+  return canvasFoto.toDataURL('image/jpeg', 0.90);
 }
 
 btnAbrirCamara.addEventListener('click', async () => {
@@ -2154,21 +2252,13 @@ btnCapturar.addEventListener('click', async () => {
 
   btnCapturar.disabled = true;
   btnRepetirFoto.disabled = true;
-  procesandoFoto.textContent = '🪄 Preparando la foto con fondo desenfocado VIP...';
   procesandoFoto.classList.remove('oculto');
 
   try{
-    fotoBase64 = await capturarFotoConBlurVip();
-    procesandoFoto.textContent = '✅ Foto preparada correctamente.';
+    fotoBase64 = await capturarFotoConFondoVip();
   }catch(error){
-    console.error('Error preparando la fotografía:', error);
-    // Respaldo seguro: nunca bloquea el registro ni pierde la foto.
-    canvasFoto.width = 900;
-    canvasFoto.height = 1200;
-    const respaldoCtx = canvasFoto.getContext('2d', { alpha:false });
-    dibujarImagenCubierta(respaldoCtx, video, 0, 0, 900, 1200);
-    fotoBase64 = canvasFoto.toDataURL('image/jpeg', 0.86);
-    procesandoFoto.textContent = '⚠️ Se guardó la foto normal para continuar el registro.';
+    console.warn('No se pudo aplicar el recorte automático; se guardará una foto normal.', error);
+    fotoBase64 = crearFotoNormalConMarca();
   }
 
   fotoResultado.src = fotoBase64;
@@ -2179,7 +2269,7 @@ btnCapturar.addEventListener('click', async () => {
   btnCapturar.disabled = false;
   btnRepetirFoto.disabled = false;
   btnRepetirFoto.classList.remove('oculto');
-  setTimeout(() => procesandoFoto.classList.add('oculto'), 1600);
+  procesandoFoto.classList.add('oculto');
   fotoTomada = true;
   document.getElementById('errorFoto').style.display = 'none';
   document.querySelector('.foto-box').classList.remove('camara-activa');
