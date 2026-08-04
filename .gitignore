@@ -1,0 +1,17 @@
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.tmp
+
+# Netlify local
+.netlify/
+
+# Copias y archivos comprimidos
+*.zip
+*.rar

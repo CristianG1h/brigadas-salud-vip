@@ -1,0 +1,2062 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="logo-vip.png">
+<link rel="apple-touch-icon" href="logo-vip.png">
+<title>Registro de paciente — VIP Salud Ocupacional</title>
+<style>
+  :root{
+    --azul:#0B5FA5;
+    --azul-osc:#083E6E;
+    --azul-claro:#EAF3FB;
+    --gris-txt:#2B2E33;
+    --gris-suave:#6B7280;
+    --borde:#D6DEE6;
+    --verde:#1B8A4B;
+    --rojo:#C0392B;
+    --fondo:#F4F7FA;
+    --blanco:#FFFFFF;
+    --naranja:#F47920;
+    --naranja-claro:#FEF1E7;
+    --morado:#6B4FA0;
+    --morado-claro:#F0ECF8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--fondo);
+    color:var(--gris-txt);
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{
+    max-width:520px;
+    margin:0 auto;
+    padding:20px 16px 60px;
+    animation:abrirRegistro .65s cubic-bezier(.22,.8,.24,1) both;
+    transform-origin:top center;
+  }
+  @keyframes abrirRegistro{
+    from{opacity:0;transform:translateY(-24px) scale(.985);clip-path:inset(0 0 100% 0 round 16px);}
+    to{opacity:1;transform:translateY(0) scale(1);clip-path:inset(0 0 0 0 round 16px);}
+  }
+  .marca{
+    text-align:center;
+    padding:14px 0 6px;
+  }
+  .marca img{max-height:48px;}
+  .marca .nombre{
+    font-weight:700;
+    font-size:15px;
+    color:var(--azul-osc);
+    letter-spacing:.3px;
+  }
+  h1{
+    font-size:22px;
+    text-align:center;
+    color:var(--azul-osc);
+    margin:8px 0 2px;
+  }
+  .sub{
+    text-align:center;
+    color:var(--gris-suave);
+    font-size:14px;
+    margin-bottom:18px;
+  }
+  .progreso-wrap{
+    margin-bottom:18px;
+  }
+  .progreso-texto{
+    text-align:center;
+    font-size:13px;
+    color:var(--gris-suave);
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  .progreso-barra{
+    height:8px;
+    background:#DCE6EF;
+    border-radius:99px;
+    overflow:hidden;
+  }
+  .progreso-relleno{
+    height:100%;
+    background:var(--azul);
+    border-radius:99px;
+    transition:width .3s ease;
+  }
+  .paso{
+    display:none;
+    background:var(--blanco);
+    border-radius:14px;
+    padding:22px 18px;
+    box-shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  }
+  .paso.activo{
+    display:block;
+    animation:abrirPaso .38s cubic-bezier(.22,.8,.24,1) both;
+    transform-origin:top center;
+  }
+  @keyframes abrirPaso{
+    from{opacity:0;transform:translateY(-12px) scaleY(.965);clip-path:inset(0 0 18% 0 round 14px);}
+    to{opacity:1;transform:translateY(0) scaleY(1);clip-path:inset(0 0 0 0 round 14px);}
+  }
+  .paso h2{
+    font-size:18px;
+    color:var(--azul-osc);
+    margin:0 0 4px;
+  }
+  .paso p.desc{
+    font-size:14px;
+    color:var(--gris-suave);
+    margin:0 0 18px;
+  }
+  label{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    margin:16px 0 6px;
+    color:var(--gris-txt);
+  }
+  label .opc{
+    font-weight:400;
+    color:var(--gris-suave);
+    font-size:13px;
+  }
+  label .req{color:var(--rojo);}
+  input[type=text],
+  input[type=email],
+  input[type=tel],
+  select{
+    width:100%;
+    padding:13px 12px;
+    font-size:16px;
+    border:1.5px solid var(--borde);
+    border-radius:9px;
+    background:var(--blanco);
+    color:var(--gris-txt);
+    appearance:none;
+    -webkit-appearance:none;
+  }
+  select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    background-size:16px;
+    padding-right:36px;
+  }
+  input:focus,select:focus{
+    outline:none;
+    border-color:var(--azul);
+    box-shadow:0 0 0 3px rgba(11,95,165,.15);
+  }
+  input.error,select.error{
+    border-color:var(--rojo);
+    background:#FDF2F1;
+  }
+  .msg-error{
+    color:var(--rojo);
+    font-size:13px;
+    margin-top:5px;
+    display:none;
+    font-weight:600;
+  }
+  .fila3{
+    display:grid;
+    grid-template-columns:1fr 1.4fr 1fr;
+    gap:8px;
+  }
+  .ayuda{
+    font-size:13px;
+    color:var(--gris-suave);
+    margin-top:5px;
+  }
+  .foto-box{
+    border:2px dashed var(--borde);
+    border-radius:12px;
+    padding:18px;
+    text-align:center;
+    background:#FAFBFC;
+    position:relative;
+  }
+  .guia-ovalo{
+    display:none;
+    position:absolute;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:56%;
+    height:78%;
+    max-width:220px;
+    border:3px dashed rgba(11,95,165,.55);
+    border-radius:50%;
+    pointer-events:none;
+    z-index:2;
+  }
+  .foto-box.camara-activa .guia-ovalo{display:block;}
+  .ejemplo-foto{
+    display:flex;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .ejemplo-item{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    padding:12px 8px;
+    border-radius:10px;
+    font-size:12px;
+    font-weight:700;
+  }
+  .ejemplo-si{background:var(--verde-claro,#E7F5EC);color:#146B3A;}
+  .ejemplo-no{background:#FBEAE8;color:var(--rojo);}
+  .ejemplo-firma{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--azul-claro);
+    border-radius:10px;
+    padding:10px 14px;
+    margin-bottom:12px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--azul-osc);
+  }
+  .foto-box img{
+    max-width:100%;
+    max-height:260px;
+    border-radius:8px;
+    display:none;
+    margin-bottom:12px;
+  }
+  video{
+    width:100%;
+    border-radius:8px;
+    display:none;
+    margin-bottom:12px;
+    background:#000;
+  }
+  canvas{display:none;}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    padding:14px;
+    font-size:16px;
+    font-weight:700;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .btn-azul{background:var(--azul);color:#fff;}
+  .btn-azul:active{background:var(--azul-osc);}
+  .btn-gris{background:#EDF1F5;color:var(--gris-txt);}
+  .btn-gris:active{background:#DCE3E9;}
+  .btn-verde{background:var(--verde);color:#fff;}
+  .btn:disabled{opacity:.5;}
+  .firma-box{
+    border:1.5px solid var(--borde);
+    border-radius:12px;
+    overflow:hidden;
+    background:#fff;
+  }
+  #firmaCanvas{
+    width:100%;
+    height:180px;
+    display:block !important;
+    touch-action:none;
+    -ms-touch-action:none;
+    background:#fff;
+    cursor:crosshair;
+  }
+  .nav-botones{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+  }
+  .nav-botones .btn{width:auto;flex:1;}
+  .legal-caja{
+    max-height:220px;
+    overflow-y:auto;
+    border:1px solid var(--borde);
+    border-radius:9px;
+    padding:12px;
+    font-size:13px;
+    line-height:1.5;
+    color:var(--gris-suave);
+    background:#FAFBFC;
+    margin-bottom:16px;
+  }
+  .check-final{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:12px;
+    border:1.5px solid var(--borde);
+    border-radius:9px;
+    margin-bottom:12px;
+  }
+  .check-final input{
+    width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--azul);
+  }
+  .check-final span{font-size:14px;}
+  .pantalla-final{
+    text-align:center;
+    padding:40px 18px;
+  }
+  .pantalla-final .icono{
+    width:70px;height:70px;border-radius:50%;
+    background:var(--verde);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:36px;margin:0 auto 18px;
+  }
+  .enviando{
+    text-align:center;
+    padding:8px;
+    font-size:14px;
+    color:var(--azul);
+    display:none;
+    font-weight:600;
+  }
+  .oculto{display:none !important;}
+
+  /* ===== PANTALLA: ¿PARA CUÁNDO ES SU CITA? (naranja) ===== */
+  .franja-naranja{
+    background:var(--naranja);
+    color:#fff;
+    text-align:center;
+    padding:5px 10px;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    border-radius:6px 6px 0 0;
+  }
+  .tarjeta-naranja{
+    border:2px solid var(--naranja);
+    border-radius:12px;
+    overflow:hidden;
+    margin-bottom:10px;
+  }
+  .opcion-grande{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:var(--naranja-claro);
+    border:none;
+    padding:18px 16px;
+    cursor:pointer;
+  }
+  .opcion-grande .titulo-op{
+    font-size:16px;
+    font-weight:800;
+    color:#8A3D0E;
+    margin-bottom:3px;
+  }
+  .opcion-grande .desc-op{
+    font-size:13px;
+    color:#8A3D0E;
+    opacity:.85;
+  }
+  .opcion-grande.seleccionada{
+    background:var(--naranja);
+  }
+  .opcion-grande.seleccionada .titulo-op,
+  .opcion-grande.seleccionada .desc-op{
+    color:#fff;
+  }
+  .calendario-brigada{
+    display:none;
+    padding:16px;
+    background:#fff;
+    border-top:2px dashed var(--naranja);
+  }
+  .calendario-brigada.activo{display:block;}
+  .fila3-fecha{
+    display:grid;
+    grid-template-columns:1fr 1.4fr 1fr;
+    gap:8px;
+  }
+
+  /* ===== PANTALLA: ¿CÓMO LLEGA HOY? (morado) ===== */
+  .franja-morada{
+    background:var(--morado);
+    color:#fff;
+    text-align:center;
+    padding:5px 10px;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    border-radius:6px 6px 0 0;
+  }
+  .tarjeta-morada{
+    border:2px solid var(--morado);
+    border-radius:12px;
+    overflow:hidden;
+    margin-bottom:10px;
+  }
+  .opcion-grande-morada{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:var(--morado-claro);
+    border:none;
+    padding:18px 16px;
+    cursor:pointer;
+    border-bottom:1px solid #E0D8ED;
+  }
+  .opcion-grande-morada:last-child{border-bottom:none;}
+  .opcion-grande-morada .titulo-op{
+    font-size:16px;
+    font-weight:800;
+    color:#4A3670;
+    margin-bottom:3px;
+  }
+  .opcion-grande-morada .desc-op{
+    font-size:13px;
+    color:#4A3670;
+    opacity:.85;
+  }
+  .opcion-grande-morada.seleccionada{
+    background:var(--morado);
+  }
+  .opcion-grande-morada.seleccionada .titulo-op,
+  .opcion-grande-morada.seleccionada .desc-op{
+    color:#fff;
+  }
+  .subpanel-morado{
+    display:none;
+    padding:16px;
+    background:#fff;
+    border-top:2px dashed var(--morado);
+  }
+  .subpanel-morado.activo{display:block;}
+  .chip-opcion{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:#fff;
+    border:1.5px solid var(--borde);
+    border-radius:9px;
+    padding:12px 14px;
+    margin-bottom:8px;
+    font-size:14px;
+    font-weight:600;
+    color:var(--gris-txt);
+    cursor:pointer;
+  }
+  .chip-opcion.seleccionada{
+    background:var(--morado-claro);
+    border-color:var(--morado);
+    color:#4A3670;
+  }
+
+  /* ===== IDENTIDAD VISUAL Y VALIDACIONES V2 ===== */
+  .marca .logo-vip{display:block;width:78px;height:78px;object-fit:contain;margin:0 auto 7px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.10));}
+  .tarjeta-origen{margin-bottom:12px;}
+  .tarjeta-origen .opcion-grande-morada{border-bottom:none;}
+  .tarjeta-origen .opcion-grande-morada.seleccionada{border-bottom:2px dashed rgba(255,255,255,.75);}
+  .campo-condicional,.bloque-condicional{margin-top:12px;}
+  .bloque-condicional{padding:14px;border:1.5px solid var(--borde);border-radius:10px;background:#FAFBFC;}
+  .bloque-condicional label:first-child{margin-top:0;}
+  .edad-calculada{margin-top:9px;padding:10px 12px;border-radius:9px;background:var(--azul-claro);color:var(--azul-osc);font-size:13px;font-weight:700;}
+  .edad-calculada.invalida{background:#FBEAE8;color:var(--rojo);}
+  .vista-valor-final{margin-top:10px;padding:10px 12px;border-radius:9px;background:#E7F5EC;color:#146B3A;font-size:13px;font-weight:700;}
+  .sugerencias-correo{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
+  .sugerencias-correo button,.correo-correccion{border:1px solid var(--borde);background:#fff;color:var(--azul-osc);border-radius:99px;padding:7px 10px;font-size:12px;font-weight:700;cursor:pointer;}
+  .sugerencias-correo button:hover,.correo-correccion:hover{border-color:var(--azul);background:var(--azul-claro);}
+  .correo-correccion{display:block;margin-top:9px;border-color:#F2C037;background:#FFF7E0;color:#5C4400;text-align:left;}
+  @media(max-width:420px){.marca .logo-vip{width:68px;height:68px}.sugerencias-correo button{font-size:11px;padding:6px 8px;}}
+
+  .campo-dinamico{margin-top:12px;}
+  .estado-carga{margin-top:8px;font-size:12px;color:var(--gris-suave);}
+  .estado-carga.ok{color:var(--verde);}
+  .estado-carga.aviso{color:#8A5A00;}
+  .nota-biofile{margin-top:12px;padding:10px 12px;border-radius:9px;background:var(--azul-claro);color:var(--azul-osc);font-size:12px;line-height:1.45;}
+  .select-con-busqueda{max-height:220px;}
+
+  /* Selectores con búsqueda: escribir, filtrar y elegir una sugerencia. */
+  .selector-buscable-original{display:none!important;}
+  .selector-buscable{position:relative;width:100%;}
+  .selector-buscable-control{position:relative;}
+  .selector-buscable-input{padding-right:78px!important;background:#fff!important;}
+  .selector-buscable-input[disabled]{background:#F3F4F6!important;color:#9CA3AF;cursor:not-allowed;}
+  .selector-buscable-acciones{position:absolute;right:7px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:2px;}
+  .selector-buscable-btn{width:30px;height:30px;border:0;border-radius:7px;background:transparent;color:var(--gris-suave);font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .selector-buscable-btn:hover{background:var(--azul-claro);color:var(--azul-osc);}
+  .selector-buscable-btn:disabled{cursor:not-allowed;opacity:.45;}
+  .selector-buscable-lista{display:none;position:absolute;z-index:1200;left:0;right:0;top:calc(100% + 5px);max-height:250px;overflow:auto;background:#fff;border:1.5px solid var(--azul);border-radius:10px;box-shadow:0 12px 28px rgba(8,62,110,.18);padding:5px;}
+  .selector-buscable.abierto .selector-buscable-lista{display:block;}
+  .selector-buscable-opcion{width:100%;border:0;background:#fff;color:var(--gris-txt);text-align:left;padding:10px 11px;border-radius:7px;font-size:14px;line-height:1.25;cursor:pointer;}
+  .selector-buscable-opcion:hover,.selector-buscable-opcion.activa{background:var(--azul-claro);color:var(--azul-osc);}
+  .selector-buscable-opcion.seleccionada{font-weight:700;background:#E2EFFA;}
+  .selector-buscable-opcion.otro{border-top:1px solid var(--borde);margin-top:4px;color:var(--azul-osc);font-weight:700;}
+  .selector-buscable-vacio{padding:12px;color:var(--gris-suave);font-size:13px;text-align:center;}
+  .selector-buscable-ayuda{margin-top:5px;font-size:12px;color:var(--gris-suave);}
+
+  @media (prefers-reduced-motion:reduce){
+    .wrap,.paso.activo{animation:none!important;}
+    html{scroll-behavior:auto!important;}
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="marca">
+    <img class="logo-vip" src="logo-vip.png" alt="Logo VIP Salud Ocupacional">
+    <div class="nombre">VIP SALUD OCUPACIONAL</div>
+  </div>
+  <h1>Registro para la Brigada de Salud</h1>
+  <p class="sub">Llene sus datos desde su celular. Tarda 5 minutos.</p>
+
+  <div class="progreso-wrap">
+    <div class="progreso-texto" id="progresoTexto">Paso 1 de 9</div>
+    <div class="progreso-barra"><div class="progreso-relleno" id="progresoRelleno" style="width:11%"></div></div>
+  </div>
+
+  <form id="formBrigada" autocomplete="off">
+
+    <!-- PASO 1: FECHA DE LA CITA (naranja) -->
+    <div class="paso activo" data-paso="1">
+      <div class="franja-naranja">📅 Primero, esto es importante</div>
+      <h2>¿Para cuándo es su cita?</h2>
+      <p class="desc">Elija la opción que le corresponde.</p>
+
+      <div class="tarjeta-naranja">
+        <button type="button" class="opcion-grande" id="btnCitaHoy">
+          <div class="titulo-op">✅ Hoy mismo</div>
+          <div class="desc-op">Vengo a la IPS a que me atiendan en este momento</div>
+        </button>
+      </div>
+
+      <div class="tarjeta-naranja">
+        <button type="button" class="opcion-grande" id="btnCitaBrigada">
+          <div class="titulo-op">📅 Tengo una brigada programada</div>
+          <div class="desc-op">Mi empresa me dio una fecha para la atención</div>
+        </button>
+        <div class="calendario-brigada" id="calendarioBrigada">
+          <label>¿Qué día es su cita? <span class="req">*</span></label>
+          <div class="fila3-fecha">
+            <select id="citaDia">
+              <option value="">Día</option>
+            </select>
+            <select id="citaMes">
+              <option value="">Mes</option>
+              <option value="01">Enero</option>
+              <option value="02">Febrero</option>
+              <option value="03">Marzo</option>
+              <option value="04">Abril</option>
+              <option value="05">Mayo</option>
+              <option value="06">Junio</option>
+              <option value="07">Julio</option>
+              <option value="08">Agosto</option>
+              <option value="09">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </select>
+            <select id="citaAnio">
+              <option value="">Año</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="msg-error" id="errorCita">Elija una opción para continuar.</div>
+    </div>
+
+    <!-- PASO 2: ORIGEN DEL PACIENTE (morado) -->
+    <div class="paso" data-paso="2">
+      <div class="franja-morada">👤 SOBRE USTED</div>
+      <h2>¿Cómo llega hoy?</h2>
+      <p class="desc">Elija una opción. La pregunta correspondiente aparecerá justo debajo.</p>
+
+      <div class="tarjeta-morada tarjeta-origen" id="tarjetaOrigenEmpresa">
+        <button type="button" class="opcion-grande-morada" id="btnOrigenEmpresa">
+          <div class="titulo-op">🏢 Vengo por mi empresa</div>
+          <div class="desc-op">Mi trabajo organizó esta atención</div>
+        </button>
+        <div class="subpanel-morado" id="subpanelEmpresa">
+          <label for="nombreEmpresaOrigen">¿Cuál es el nombre de su empresa? <span class="opc">(si lo sabe)</span></label>
+          <input type="text" id="nombreEmpresaOrigen" placeholder="Ejemplo: Constructora ABC S.A.S." maxlength="120">
+        </div>
+      </div>
+
+      <div class="tarjeta-morada tarjeta-origen" id="tarjetaOrigenParticular">
+        <button type="button" class="opcion-grande-morada" id="btnOrigenParticular">
+          <div class="titulo-op">🚶 Vengo por mi cuenta</div>
+          <div class="desc-op">Yo mismo decidí venir (particular)</div>
+        </button>
+        <div class="subpanel-morado" id="subpanelParticular">
+          <label>¿Cómo se enteró de nosotros? <span class="req">*</span></label>
+          <button type="button" class="chip-opcion" data-valor="Redes sociales">📱 Redes sociales</button>
+          <button type="button" class="chip-opcion" data-valor="Internet o Google">🔎 Internet o Google</button>
+          <button type="button" class="chip-opcion" data-valor="Un amigo o familiar me recomendó">👥 Un amigo o familiar me recomendó</button>
+          <button type="button" class="chip-opcion" data-valor="Ya era paciente antes">🔁 Ya era paciente antes</button>
+          <button type="button" class="chip-opcion" data-valor="Otro">✏️ Otro</button>
+          <div class="campo-condicional oculto" id="campoOtroOrigen">
+            <label for="otroComoSeEntero">Cuéntenos cuál fue el otro medio <span class="req">*</span></label>
+            <input type="text" id="otroComoSeEntero" placeholder="Ejemplo: volante, feria, convenio..." maxlength="100">
+          </div>
+        </div>
+      </div>
+      <div class="msg-error" id="errorOrigen">Elija una opción para continuar.</div>
+    </div>
+
+        <!-- PASO 3: DOCUMENTO -->
+    <div class="paso" data-paso="3">
+      <h2>Su documento</h2>
+      <p class="desc">Escriba el número tal como aparece en su documento.</p>
+
+      <label for="tipoDocumento">Tipo de documento <span class="req">*</span></label>
+      <select name="tipoDocumento" id="tipoDocumento" required>
+        <option value="">Toque para elegir</option>
+        <option value="CC">Cédula de ciudadanía (CC)</option>
+        <option value="TI">Tarjeta de identidad (TI)</option>
+        <option value="CE">Cédula de extranjería (CE)</option>
+        <option value="PPT">Permiso de protección temporal (PPT)</option>
+        <option value="PASAPORTE">Pasaporte</option>
+      </select>
+      <div class="msg-error" id="errorTipoDocumento">Elija el tipo de documento.</div>
+
+      <label for="numeroDocumento">Número de documento <span class="req">*</span></label>
+      <input type="text" inputmode="numeric" name="numeroDocumento" id="numeroDocumento" placeholder="Ejemplo: 1088123456" maxlength="20" autocomplete="off" required>
+      <div class="ayuda" id="ayudaDocumento">Para CC, TI, CE y PPT solo se permiten números.</div>
+      <div class="msg-error" id="errorNumeroDocumento">Escriba un número de documento válido.</div>
+
+      <div class="estado-carga oculto" id="cargandoOrden" style="margin-top:14px;">🔎 Buscando si ya tiene una orden generada...</div>
+
+      <div class="bloque-condicional oculto" id="panelOrdenEncontrada" style="margin-top:14px;border-color:var(--verde);background:#F0FBF4;">
+        <div style="font-weight:800;color:#146B3A;margin-bottom:8px;">✅ Esta persona ya tiene una orden programada</div>
+        <div style="font-size:13px;margin-bottom:4px;"><strong>Empresa:</strong> <span id="empresaOrdenTexto">—</span></div>
+        <div style="font-size:13px;margin-bottom:10px;"><strong>Tipo de examen:</strong> <span id="tipoExamenOrden">—</span></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Exámenes que le corresponden (para transcribir en Biofile):</div>
+        <ul id="listaExamenesOrden" style="margin:0;padding-left:20px;font-size:14px;"></ul>
+      </div>
+    </div>
+
+        <!-- PASO 4: NOMBRES -->
+    <div class="paso" data-paso="4">
+      <h2>Sus nombres y apellidos</h2>
+      <p class="desc">Escríbalos como aparecen en su documento. Estos campos solo aceptan letras.</p>
+
+      <label for="primerApellido">Primer apellido <span class="req">*</span></label>
+      <input type="text" name="primerApellido" id="primerApellido" class="solo-letras" placeholder="Ejemplo: García" maxlength="50" autocomplete="family-name" required>
+      <div class="msg-error" id="errorPrimerApellido">Escriba un apellido válido usando solo letras. Ejemplo: García.</div>
+
+      <label for="segundoApellido">Segundo apellido <span class="opc">(si tiene)</span></label>
+      <input type="text" name="segundoApellido" id="segundoApellido" class="solo-letras" placeholder="Ejemplo: Rodríguez" maxlength="50">
+      <div class="msg-error" id="errorSegundoApellido">Use únicamente letras, espacios, guion o apóstrofo.</div>
+
+      <label for="primerNombre">Primer nombre <span class="req">*</span></label>
+      <input type="text" name="primerNombre" id="primerNombre" class="solo-letras" placeholder="Ejemplo: Laura" maxlength="50" autocomplete="given-name" required>
+      <div class="msg-error" id="errorPrimerNombre">Escriba un nombre válido usando solo letras. Ejemplo: Laura.</div>
+
+      <label for="otrosNombres">Otros nombres <span class="opc">(si tiene)</span></label>
+      <input type="text" name="otrosNombres" id="otrosNombres" class="solo-letras" placeholder="Ejemplo: Marcela" maxlength="80">
+      <div class="msg-error" id="errorOtrosNombres">Use únicamente letras, espacios, guion o apóstrofo.</div>
+    </div>
+
+        <!-- PASO 5: SOBRE USTED -->
+    <div class="paso" data-paso="5">
+      <h2>Sobre usted</h2>
+      <p class="desc">Datos básicos personales.</p>
+
+      <label>Fecha de nacimiento <span class="req">*</span></label>
+      <div class="fila3">
+        <select name="fnDia" id="fnDia" required><option value="">Día</option></select>
+        <select name="fnMes" id="fnMes" required>
+          <option value="">Mes</option>
+          <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+          <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
+          <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+          <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+        </select>
+        <select name="fnAnio" id="fnAnio" required><option value="">Año</option></select>
+      </div>
+      <div class="edad-calculada" id="edadCalculada">Seleccione la fecha completa para calcular la edad.</div>
+      <div class="msg-error" id="errorFechaNacimiento">Seleccione una fecha válida. La persona debe tener por lo menos 5 años.</div>
+
+      <label for="tipoPaisNacimiento">País de nacimiento <span class="req">*</span></label>
+      <select id="tipoPaisNacimiento" required>
+        <option value="">Toque para elegir</option>
+        <option value="COLOMBIA">Colombia</option>
+        <option value="OTRO">Otro país</option>
+      </select>
+
+      <div id="nacimientoColombia" class="bloque-condicional oculto">
+        <label for="departamentoNacimiento">Departamento de nacimiento <span class="req">*</span></label>
+        <select id="departamentoNacimiento" disabled>
+          <option value="">Primero elija el departamento</option>
+        </select>
+        <label for="municipioNacimiento">Municipio o ciudad de nacimiento <span class="req">*</span></label>
+        <select id="municipioNacimiento" disabled>
+          <option value="">Primero elija el departamento</option>
+        </select>
+      </div>
+
+      <div id="nacimientoExterior" class="bloque-condicional oculto">
+        <label for="paisNacimientoOtro">¿En qué país nació? <span class="req">*</span></label>
+        <input type="text" id="paisNacimientoOtro" class="solo-letras" placeholder="Ejemplo: Venezuela" maxlength="60">
+        <label for="ciudadNacimientoOtro">Ciudad o pueblo donde nació <span class="req">*</span></label>
+        <input type="text" id="ciudadNacimientoOtro" class="solo-letras" placeholder="Ejemplo: Caracas" maxlength="80">
+      </div>
+      <input type="hidden" name="ciudadNacimiento" id="ciudadNacimientoFinal">
+      <div class="vista-valor-final oculto" id="vistaLugarNacimiento"></div>
+      <div class="msg-error" id="errorLugarNacimiento">Complete correctamente el país y el lugar de nacimiento.</div>
+
+      <label for="genero">Género <span class="req">*</span></label>
+      <select name="genero" id="genero" required>
+        <option value="">Toque para elegir</option>
+        <option value="MASCULINO">Masculino</option>
+        <option value="FEMENINO">Femenino</option>
+        <option value="INDETERMINADO">Indeterminado</option>
+      </select>
+      <div class="msg-error" id="errorGenero">Elija una opción.</div>
+
+      <label for="estadoCivil">Estado civil <span class="req">*</span></label>
+      <select name="estadoCivil" id="estadoCivil" required>
+        <option value="">Toque para elegir</option>
+        <option value="Soltero(a)">Soltero(a)</option><option value="Casado(a)">Casado(a)</option>
+        <option value="Union libre">Unión libre</option><option value="Separado(a)">Separado(a)</option>
+        <option value="Viudo(a)">Viudo(a)</option>
+      </select>
+      <div class="msg-error" id="errorEstadoCivil">Elija una opción.</div>
+
+      <label for="nivelEducativo">Hasta qué nivel estudió <span class="req">*</span></label>
+      <select name="nivelEducativo" id="nivelEducativo" required>
+        <option value="">Toque para elegir</option>
+        <option value="Ninguno">Ninguno</option><option value="Primaria">Primaria</option>
+        <option value="Bachillerato">Bachillerato</option><option value="Tecnico">Técnico</option>
+        <option value="Tecnologo">Tecnólogo</option><option value="Universitario">Universitario</option>
+        <option value="Posgrado">Posgrado</option><option value="Doctorado">Doctorado</option>
+      </select>
+      <div class="msg-error" id="errorNivelEducativo">Elija una opción.</div>
+
+      <label for="correo">Correo electrónico <span class="opc">(si tiene)</span></label>
+      <input type="email" name="correo" id="correo" placeholder="ejemplo@correo.com" autocomplete="email" maxlength="120">
+      <div class="ayuda">Puede escribir un correo institucional o usar una sugerencia:</div>
+      <div class="sugerencias-correo">
+        <button type="button" data-dominio="gmail.com">@gmail.com</button>
+        <button type="button" data-dominio="hotmail.com">@hotmail.com</button>
+        <button type="button" data-dominio="outlook.com">@outlook.com</button>
+        <button type="button" data-dominio="yahoo.com">@yahoo.com</button>
+        <button type="button" data-dominio="icloud.com">@icloud.com</button>
+      </div>
+      <button type="button" class="correo-correccion oculto" id="correoCorreccion"></button>
+      <div class="msg-error" id="errorCorreo">Escriba un correo completo. Ejemplo: nombre@gmail.com</div>
+    </div>
+
+        <!-- PASO 6: DONDE VIVE -->
+    <div class="paso" data-paso="6">
+      <h2>Dónde vive</h2>
+      <p class="desc">Datos de su vivienda.</p>
+
+      <label for="direccionVivienda">Dirección de su casa <span class="req">*</span></label>
+      <input type="text" name="direccion" id="direccionVivienda" required autocomplete="street-address">
+      <div class="msg-error">Escriba su dirección.</div>
+
+      <label for="municipioResidencia">Municipio o ciudad donde vive <span class="req">*</span></label>
+      <select name="municipioResidencia" id="municipioResidencia" required>
+        <option value="">Toque para elegir</option>
+      </select>
+      <div class="selector-buscable-ayuda">Escriba el nombre, por ejemplo <strong>CHÍA</strong>, y elija la sugerencia.</div>
+      <div class="msg-error" id="errorMunicipioResidencia">Seleccione el municipio donde vive.</div>
+
+      <div id="bloqueBogota" class="bloque-condicional oculto">
+        <label for="localidadBogota">Localidad de Bogotá <span class="req">*</span></label>
+        <select id="localidadBogota">
+          <option value="">Toque para elegir</option>
+        </select>
+        <div class="selector-buscable-ayuda">Puede escribir una parte del nombre para filtrar las localidades.</div>
+        <div class="msg-error" id="errorLocalidadBogota">Seleccione la localidad.</div>
+
+        <label for="barrioBogota">Barrio o sector <span class="opc">(si sabe)</span></label>
+        <select id="barrioBogota" disabled>
+          <option value="">Primero seleccione la localidad</option>
+        </select>
+        <div class="selector-buscable-ayuda">Escriba el barrio para filtrar. Si no aparece, elija <strong>OTRO BARRIO</strong>.</div>
+        <div class="estado-carga" id="estadoBarrios"></div>
+
+        <div id="bloqueOtroBarrioBogota" class="campo-dinamico oculto">
+          <label for="otroBarrioBogota">Escriba el barrio o la vereda</label>
+          <input type="text" id="otroBarrioBogota" placeholder="Ejemplo: Barrio no encontrado">
+        </div>
+      </div>
+
+      <div id="bloqueFueraBogota" class="bloque-condicional oculto">
+        <label for="barrioFueraBogota">Barrio o vereda <span class="opc">(si sabe)</span></label>
+        <input type="text" id="barrioFueraBogota" placeholder="Ejemplo: Terreros">
+        <div class="ayuda">Se guardará junto con el municipio. Ejemplo: TERREROS (SOACHA).</div>
+      </div>
+
+      <!-- BIOFILE siempre conserva el municipio Bogotá. La residencia real queda en municipioResidencia. -->
+      <input type="hidden" name="municipio" id="municipioBiofile" value="Bogotá D.C.">
+      <input type="hidden" name="localidad" id="localidadFinal" value="">
+      <input type="hidden" name="barrio" id="barrioFinal" value="">
+
+      <label>Estrato <span class="opc">(aparece en el recibo de la luz)</span></label>
+      <select name="estrato">
+        <option value="">Toque para elegir</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </select>
+
+      <label for="celular">Su número de celular <span class="req">*</span></label>
+      <input type="tel" inputmode="numeric" name="celular" id="celular" placeholder="Ejemplo: 3001234567" maxlength="10" autocomplete="tel" required>
+      <div class="ayuda">Debe tener 10 números y comenzar por 3.</div>
+      <div class="msg-error" id="errorCelular">Escriba un celular colombiano válido de 10 números.</div>
+    </div>
+
+    <!-- PASO 7: AFILIACIONES -->
+    <div class="paso" data-paso="7">
+      <h2>Sus afiliaciones</h2>
+      <p class="desc">Puede elegir una opción o dejarla en blanco. Si no aparece, seleccione “Otro” y escríbala.</p>
+
+      <label for="epsOpcion">¿Cuál es su EPS? <span class="opc">(opcional)</span></label>
+      <select id="epsOpcion" name="epsOpcion">
+        <option value="">No sabe / dejar en blanco</option>
+      </select>
+      <div id="epsOtroBloque" class="campo-dinamico oculto">
+        <label for="epsOtro">Escriba el nombre de la EPS</label>
+        <input type="text" id="epsOtro" name="epsOtro" placeholder="Nombre de la EPS">
+      </div>
+
+      <label for="afpOpcion">¿Cuál es su fondo de pensiones (AFP)? <span class="opc">(opcional)</span></label>
+      <select id="afpOpcion" name="afpOpcion">
+        <option value="">No sabe / dejar en blanco</option>
+      </select>
+      <div id="afpOtroBloque" class="campo-dinamico oculto">
+        <label for="afpOtro">Escriba el fondo de pensiones</label>
+        <input type="text" id="afpOtro" name="afpOtro" placeholder="Nombre del fondo de pensiones">
+      </div>
+
+      <label for="arlOpcion">¿Cuál es su ARL? <span class="opc">(opcional)</span></label>
+      <select id="arlOpcion" name="arlOpcion">
+        <option value="">No sabe / dejar en blanco</option>
+      </select>
+      <div id="arlOtroBloque" class="campo-dinamico oculto">
+        <label for="arlOtro">Escriba el nombre de la ARL</label>
+        <input type="text" id="arlOtro" name="arlOtro" placeholder="Nombre de la ARL">
+      </div>
+
+      <div class="nota-biofile">Si deja un dato vacío, BIOFILE lo registrará como <strong>NO REFIERE</strong>.</div>
+    </div>
+
+
+    <!-- PASO 8: FOTO Y FIRMA -->
+    <div class="paso" data-paso="8">
+      <h2>Tómese una foto de su CARA</h2>
+      <p class="desc">Mire la cámara y ponga su cara dentro del óvalo. De frente, con buena luz, sin gorra ni tapabocas.</p>
+
+      <div class="ejemplo-foto">
+        <div class="ejemplo-item ejemplo-si">
+          <svg viewBox="0 0 100 100" width="52" height="52">
+            <circle cx="50" cy="38" r="20" fill="#1B8A4B"/>
+            <path d="M20 85 Q50 60 80 85" fill="#1B8A4B"/>
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#1B8A4B" stroke-width="4"/>
+          </svg>
+          <span>Así SÍ — su cara</span>
+        </div>
+        <div class="ejemplo-item ejemplo-no">
+          <svg viewBox="0 0 100 100" width="52" height="52">
+            <rect x="18" y="28" width="64" height="44" rx="4" fill="#C0392B"/>
+            <rect x="26" y="38" width="20" height="14" fill="#fff"/>
+            <line x1="30" y1="52" x2="74" y2="52" stroke="#fff" stroke-width="3"/>
+            <line x1="30" y1="60" x2="74" y2="60" stroke="#fff" stroke-width="3"/>
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#C0392B" stroke-width="4"/>
+            <line x1="16" y1="16" x2="84" y2="84" stroke="#C0392B" stroke-width="5"/>
+          </svg>
+          <span>Así NO — su documento</span>
+        </div>
+      </div>
+
+      <div class="foto-box">
+        <div class="guia-ovalo" id="guiaOvalo"></div>
+        <video id="video" autoplay playsinline></video>
+        <img id="fotoResultado" alt="Su foto">
+        <canvas id="canvasFoto"></canvas>
+        <button type="button" class="btn btn-azul" id="btnAbrirCamara">📷 Abrir la cámara</button>
+        <button type="button" class="btn btn-azul oculto" id="btnCapturar" style="margin-top:10px;">Tomar la foto</button>
+        <button type="button" class="btn btn-gris oculto" id="btnRepetirFoto" style="margin-top:10px;">Repetir la foto</button>
+      </div>
+      <div class="msg-error" id="errorFoto">Tome su foto antes de continuar.</div>
+
+      <label style="margin-top:30px;">Ahora, firme aquí con su dedo <span class="req">*</span></label>
+      <p class="desc" style="margin-top:0;">No suba ninguna foto. Toque la pantalla y dibuje su firma con el dedo, como firma en un papel.</p>
+
+      <div class="ejemplo-firma">
+        <svg viewBox="0 0 160 50" width="140" height="44">
+          <path d="M8 38 Q 20 10, 35 30 T 60 25 Q 75 15, 85 35 T 115 20 Q 130 8, 150 30" fill="none" stroke="#0B5FA5" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>Dibuje así, tocando y arrastrando el dedo</span>
+      </div>
+
+      <div class="firma-box">
+        <canvas id="firmaCanvas"></canvas>
+      </div>
+      <button type="button" class="btn btn-gris" id="btnBorrarFirma" style="margin-top:10px;">Borrar y firmar otra vez</button>
+      <div class="msg-error" id="errorFirma">Firme antes de continuar.</div>
+    </div>
+
+    <!-- PASO 9: AUTORIZACION -->
+    <div class="paso" data-paso="9">
+      <h2>Último paso: autorización</h2>
+      <div class="legal-caja">
+        <strong>AUTORIZACIÓN PARA EL TRATAMIENTO DE DATOS PERSONALES (Ley 1581 de 2012 y Decreto 1377 de 2013).</strong>
+        <p>Autorizo de manera libre, previa, expresa e informada a la IPS responsable de esta brigada de salud ocupacional para recolectar, almacenar y usar mis datos personales, incluidos datos sensibles como mi información de salud, mi fotografía y mi firma, con estas finalidades: (1) realizar mi registro para la atención en salud ocupacional; (2) elaborar mi historia clínica ocupacional y los documentos de la atención; (3) contactarme sobre los servicios prestados; y (4) cumplir las obligaciones legales de las Instituciones Prestadoras de Servicios de Salud.</p>
+        <p>Conozco mis derechos a conocer, actualizar, corregir y eliminar mis datos, y a revocar esta autorización, contactando directamente a la IPS. Mi información de salud será tratada con reserva según la Ley 23 de 1981 y la Resolución 1995 de 1999.</p>
+      </div>
+
+      <label class="check-final">
+        <input type="checkbox" id="checkAutorizo" required>
+        <span><strong>Autorizo</strong> el uso de mis datos, mi foto y mi firma, según el texto de arriba.</span>
+      </label>
+
+      <label class="check-final">
+        <input type="checkbox" id="checkVerdad" required>
+        <span>Declaro que esta información es <strong>verdadera</strong> y soy yo quien la envía.</span>
+      </label>
+      <div class="msg-error" id="errorAutorizacion">Debe aceptar las dos casillas para enviar su registro.</div>
+
+      <div class="enviando" id="mensajeEnviando">⏳ Enviando su registro… no cierre esta página.</div>
+      <button type="button" class="btn btn-verde" id="btnEnviar">ENVIAR MI REGISTRO ✓</button>
+    </div>
+
+  </form>
+
+  <div class="nav-botones" id="navBotones">
+    <button type="button" class="btn btn-gris" id="btnAtras">← Atrás</button>
+    <button type="button" class="btn btn-azul" id="btnSiguiente">Siguiente →</button>
+  </div>
+
+  <!-- PANTALLA FINAL -->
+  <div class="pantalla-final oculto" id="pantallaFinal">
+    <div class="icono">✓</div>
+    <h2>¡Listo! Su registro fue enviado.</h2>
+    <p>Gracias, <span id="nombreFinal"></span>.</p>
+    <p>El día de la brigada solo debe presentarse <strong>con su documento de identidad</strong>.</p>
+    <button type="button" class="btn btn-azul" id="btnOtroRegistro" style="max-width:280px;margin:20px auto 0;">Registrar a otra persona</button>
+    <p class="ayuda" style="margin-top:24px;">Sus datos son confidenciales y solo los usará la IPS para su atención en salud.</p>
+  </div>
+
+</div>
+
+<script>
+/* ===================== CONFIGURACIÓN ===================== */
+// IMPORTANTE: se conserva el Apps Script antiguo porque guarda el registro, las imágenes y envía los correos.
+// No cambie esta URL para esta actualización.
+const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbzRTN_j8Y2j03xJvxZoqAofDPBdRTvkHqcYUep-zuoxMSHj7N2qg8Cul6tyQ-xUNAlP/exec";
+// URL separada, solo para consultar si una cédula ya tiene una orden en el Sheet Maestro.
+// Es un proyecto de Apps Script distinto (v4), no toca ni afecta el guardado del registro (v3, arriba).
+const URL_APPS_SCRIPT_ORDEN = "https://script.google.com/macros/s/AKfycbyi519Shbz07KOhOb2SWNmvZZcqTJQxVe6snS3mtwuY7iW45Fo7ml2AYGZjLtMb8VKy/exec";
+
+/* Datos incorporados desde el CSV suministrado. No requiere cargar un archivo adicional. */
+const MUNICIPIOS_POR_DEPARTAMENTO = {"AMAZONAS":["EL ENCANTO","LA CHORRERA","LA PEDRERA","LA VICTORIA","LETICIA","MIRITI PARANA","PUERTO ALEGRIA","PUERTO ARICA","PUERTO NARINO","PUERTO SANTANDER","TARAPACA"],"ANTIOQUIA":["ABEJORRAL","ABRIAQUI","ALEJANDRIA","AMAGA","AMALFI","ANDES","ANGELOPOLIS","ANGOSTURA","ANORI","ANZA","APARTADO","ARBOLETES","ARGELIA","ARMENIA","BARBOSA","BELLO","BELMIRA","BETANIA","BETULIA","BRICENO","BURITICA","CACERES","CAICEDO","CALDAS","CAMPAMENTO","CANASGORDAS","CARACOLI","CARAMANTA","CAREPA","CAROLINA","CAUCASIA","CHIGORODO","CISNEROS","CIUDAD BOLIVAR","COCORNA","CONCEPCION","CONCORDIA","COPACABANA","DABEIBA","DON MATIAS","EBEJICO","EL BAGRE","EL CARMEN DE VIBORAL","EL SANTUARIO","ENTRERRIOS","ENVIGADO","FREDONIA","FRONTINO","GIRALDO","GIRARDOTA","GOMEZ PLATA","GRANADA","GUADALUPE","GUARNE","GUATAPE","HELICONIA","HISPANIA","ITAGUI","ITUANGO","JARDIN","JERICO","LA CEJA","LA ESTRELLA","LA PINTADA","LA UNION","LIBORINA","MACEO","MARINILLA","MEDELLIN","MONTEBELLO","MURINDO","MUTATA","NARINO","NECHI","NECOCLI","OLAYA","PENOL","PEQUE","PUEBLORRICO","PUERTO BERRIO","PUERTO NARE","PUERTO TRIUNFO","REMEDIOS","RETIRO","RIONEGRO","SABANALARGA","SABANETA","SALGAR","SAN ANDRES DE CUERQUIA","SAN CARLOS","SAN FRANCISCO","SAN JERONIMO","SAN JOSE DE LA MONTANA","SAN JUAN DE URABA","SAN LUIS","SAN PEDRO","SAN PEDRO DE URABA","SAN RAFAEL","SAN ROQUE","SAN VICENTE","SANTA BARBARA","SANTA ROSA DE OSOS","SANTAFE DE ANTIOQUIA","SANTO DOMINGO","SEGOVIA","SONSON","SOPETRAN","TAMESIS","TARAZA","TARSO","TITIRIBI","TOLEDO","TURBO","URAMITA","URRAO","VALDIVIA","VALPARAISO","VEGACHI","VENECIA","VIGIA DEL FUERTE","YALI","YARUMAL","YOLOMBO","YONDO","ZARAGOZA"],"ARAUCA":["ARAUCA","ARAUQUITA","CRAVO NORTE","FORTUL","PUERTO RONDON","SARAVENA","TAME"],"ARCHIPIELAGO DE SAN ANDRES, PROVIDENCIA Y SANTA CATALINA":["PROVIDENCIA","SAN ANDRES"],"ATLANTICO":["BARANOA","BARRANQUILLA","CAMPO DE LA CRUZ","CANDELARIA","GALAPA","JUAN DE ACOSTA","LURUACO","MALAMBO","MANATI","PALMAR DE VARELA","PIOJO","POLONUEVO","PONEDERA","PUERTO COLOMBIA","REPELON","SABANAGRANDE","SABANALARGA","SANTA LUCIA","SANTO TOMAS","SOLEDAD","SUAN","TUBARA","USIACURI"],"BOGOTA D.C.":["BOGOTA D.C."],"BOLIVAR":["ACHI","ALTOS DEL ROSARIO","ARENAL","ARJONA","ARROYOHONDO","BARRANCO DE LOBA","CALAMAR","CANTAGALLO","CARTAGENA","CICUCO","CLEMENCIA","CORDOBA","EL CARMEN DE BOLIVAR","EL GUAMO","EL PENON","HATILLO DE LOBA","MAGANGUE","MAHATES","MARGARITA","MARIA LA BAJA","MOMPOS","MONTECRISTO","MORALES","NOROSI","PINILLOS","REGIDOR","RIO VIEJO","SAN CRISTOBAL","SAN ESTANISLAO","SAN FERNANDO","SAN JACINTO","SAN JACINTO DEL CAUCA","SAN JUAN NEPOMUCENO","SAN MARTIN DE LOBA","SAN PABLO DE BORBUR","SANTA CATALINA","SANTA ROSA","SANTA ROSA DEL SUR","SIMITI","SOPLAVIENTO","TALAIGUA NUEVO","TIQUISIO","TURBACO","TURBANA","VILLANUEVA","ZAMBRANO"],"BOYACA":["ALMEIDA","AQUITANIA","ARCABUCO","BELEN","BERBEO","BETEITIVA","BOAVITA","BOYACA","BRICENO","BUENA VISTA","BUSBANZA","CALDAS","CAMPOHERMOSO","CERINZA","CHINAVITA","CHIQUINQUIRA","CHIQUIZA","CHISCAS","CHITA","CHITARAQUE","CHIVATA","CHIVOR","CIENEGA","COMBITA","COPER","CORRALES","COVARACHIA","CUBARA","CUCAITA","CUITIVA","DUITAMA","EL COCUY","EL ESPINO","FIRAVITOBA","FLORESTA","GACHANTIVA","GAMEZA","GARAGOA","GUACAMAYAS","GUATEQUE","GUAYATA","GUICAN","IZA","JENESANO","JERICO","LA CAPILLA","LA UVITA","LA VICTORIA","LABRANZAGRANDE","MACANAL","MARIPI","MIRAFLORES","MONGUA","MONGUI","MONIQUIRA","MOTAVITA","MUZO","NOBSA","NUEVO COLON","OICATA","OTANCHE","PACHAVITA","PAEZ","PAIPA","PAJARITO","PANQUEBA","PAUNA","PAYA","PAZ DE RIO","PESCA","PISBA","PUERTO BOYACA","QUIPAMA","RAMIRIQUI","RAQUIRA","RONDON","SABOYA","SACHICA","SAMACA","SAN EDUARDO","SAN JOSE DE PARE","SAN LUIS DE GACENO","SAN MATEO","SAN MIGUEL DE SEMA","SAN PABLO DE BORBUR","SANTA MARIA","SANTA ROSA DE VITERBO","SANTA SOFIA","SANTANA","SATIVANORTE","SATIVASUR","SIACHOQUE","SOATA","SOCHA","SOCOTA","SOGAMOSO","SOMONDOCO","SORA","SORACA","SOTAQUIRA","SUSACON","SUTAMARCHAN","SUTATENZA","TASCO","TENZA","TIBANA","TIBASOSA","TINJACA","TIPACOQUE","TOCA","TOGUI","TOPAGA","TOTA","TUNJA","TUNUNGUA","TURMEQUE","TUTA","TUTAZA","UMBITA","VENTAQUEMADA","VILLA DE LEYVA","VIRACACHA","ZETAQUIRA"],"CALDAS":["AGUADAS","ANSERMA","ARANZAZU","BELALCAZAR","CHINCHINA","FILADELFIA","LA DORADA","LA MERCED","MANIZALES","MANZANARES","MARMATO","MARQUETALIA","MARULANDA","NEIRA","NORCASIA","PACORA","PALESTINA","PENSILVANIA","RIOSUCIO","RISARALDA","SALAMINA","SAMANA","SAN JOSE","SUPIA","VICTORIA","VILLAMARIA","VITERBO"],"CAQUETA":["ALBANIA","BELEN DE LOS ANDAQUIES","CARTAGENA DEL CHAIRA","CURILLO","EL DONCELLO","EL PAUJIL","FLORENCIA","LA MONTANITA","MILAN","MORELIA","PUERTO RICO","SAN JOSE DEL FRAGUA","SAN VICENTE DEL CAGUAN","SOLANO","SOLITA","VALPARAISO"],"CASANARE":["AGUAZUL","CHAMEZA","HATO COROZAL","LA SALINA","MANI","MONTERREY","NUNCHIA","OROCUE","PAZ DE ARIPORO","PORE","RECETOR","SABANALARGA","SACAMA","SAN LUIS DE GACENO","TAMARA","TAURAMENA","TRINIDAD","VILLANUEVA","YOPAL"],"CAUCA":["ALMAGUER","ARGELIA","BALBOA","BOLIVAR","BUENOS AIRES","CAJIBIO","CALDONO","CALOTO","CORINTO","EL TAMBO","FLORENCIA","GUACHENE","GUAPI","INZA","JAMBALO","LA SIERRA","LA VEGA","LOPEZ","MERCADERES","MIRANDA","MORALES","PADILLA","PAEZ","PATIA","PIAMONTE","PIENDAMO","POPAYAN","PUERTO TEJADA","PURACE","ROSAS","SAN SEBASTIAN","SANTA ROSA","SANTANDER DE QUILICHAO","SILVIA","SOTARA","SUAREZ","SUCRE","TIMBIO","TIMBIQUI","TORIBIO","TOTORO","VILLA RICA"],"CESAR":["AGUACHICA","AGUSTIN CODAZZI","ASTREA","BECERRIL","BOSCONIA","CHIMICHAGUA","CHIRIGUANA","CURUMANI","EL COPEY","EL PASO","GAMARRA","GONZALEZ","LA GLORIA","LA JAGUA DE IBIRICO","LA PAZ","MANAURE","PAILITAS","PELAYA","PUEBLO BELLO","RIO DE ORO","SAN ALBERTO","SAN DIEGO","SAN MARTIN","TAMALAMEQUE","VALLEDUPAR"],"CHOCO":["ACANDI","ALTO BAUDO","ATRATO","BAGADO","BAHIA SOLANO","BAJO BAUDO","BELEN DE BAJIRA","BOJAYA","CARMEN DEL DARIEN","CERTEGUI","CONDOTO","EL CANTON DEL SAN PABLO","EL CARMEN DE ATRATO","EL LITORAL DEL SAN JUAN","ISTMINA","JURADO","LLORO","MEDIO ATRATO","MEDIO BAUDO","MEDIO SAN JUAN","NOVITA","NUQUI","QUIBDO","RIO IRO","RIO QUITO","RIOSUCIO","SAN JOSE DEL PALMAR","SIPI","TADO","UNGUIA","UNION PANAMERICANA"],"CORDOBA":["AYAPEL","BUENAVISTA","CANALETE","CERETE","CHIMA","CHINU","CIENAGA DE ORO","COTORRA","LA APARTADA","LORICA","LOS CORDOBAS","MOMIL","MONITOS","MONTELIBANO","MONTERIA","PLANETA RICA","PUEBLO NUEVO","PUERTO ESCONDIDO","PUERTO LIBERTADOR","PURISIMA","SAHAGUN","SAN ANDRES SOTAVENTO","SAN ANTERO","SAN BERNARDO DEL VIENTO","SAN CARLOS","SAN JOSE DE URE","SAN PELAYO","TIERRALTA","TUCHIN","VALENCIA"],"CUNDINAMARCA":["AGUA DE DIOS","ALBAN","ANAPOIMA","ANOLAIMA","APULO","ARBELAEZ","BELTRAN","BITUIMA","BOJACA","CABRERA","CACHIPAY","CAJICA","CAPARRAPI","CAQUEZA","CARMEN DE CARUPA","CHAGUANI","CHIA","CHIPAQUE","CHOACHI","CHOCONTA","COGUA","COTA","CUCUNUBA","EL COLEGIO","EL PENON","EL ROSAL","FACATATIVA","FOMEQUE","FOSCA","FUNZA","FUQUENE","FUSAGASUGA","GACHALA","GACHANCIPA","GACHETA","GAMA","GIRARDOT","GRANADA","GUACHETA","GUADUAS","GUASCA","GUATAQUI","GUATAVITA","GUAYABAL DE SIQUIMA","GUAYABETAL","GUTIERREZ","JERUSALEN","JUNIN","LA CALERA","LA MESA","LA PALMA","LA PENA","LA VEGA","LENGUAZAQUE","MACHETA","MADRID","MANTA","MEDINA","MOSQUERA","NARINO","NEMOCON","NILO","NIMAIMA","NOCAIMA","PACHO","PAIME","PANDI","PARATEBUENO","PASCA","PUERTO SALGAR","PULI","QUEBRADANEGRA","QUETAME","QUIPILE","RICAURTE","SAN ANTONIO DEL TEQUENDAMA","SAN BERNARDO","SAN CAYETANO","SAN FRANCISCO","SAN JUAN DE RIO SECO","SASAIMA","SESQUILE","SIBATE","SILVANIA","SIMIJACA","SOACHA","SOPO","SUBACHOQUE","SUESCA","SUPATA","SUSA","SUTATAUSA","TABIO","TAUSA","TENA","TENJO","TIBACUY","TIBIRITA","TOCAIMA","TOCANCIPA","TOPAIPI","UBALA","UBAQUE","UNE","UTICA","VENECIA","VERGARA","VIANI","VILLA DE SAN DIEGO DE UBATE","VILLAGOMEZ","VILLAPINZON","VILLETA","VIOTA","YACOPI","ZIPACON","ZIPAQUIRA"],"GUAINIA":["BARRANCO MINAS","CACAHUAL","INIRIDA","LA GUADALUPE","MAPIRIPANA","MORICHAL","PANA PANA","PUERTO COLOMBIA","SAN FELIPE"],"GUAVIARE":["CALAMAR","EL RETORNO","MIRAFLORES","SAN JOSE DEL GUAVIARE"],"HUILA":["ACEVEDO","AGRADO","AIPE","ALGECIRAS","ALTAMIRA","BARAYA","CAMPOALEGRE","COLOMBIA","ELIAS","GARZON","GIGANTE","GUADALUPE","HOBO","IQUIRA","ISNOS","LA ARGENTINA","LA PLATA","NATAGA","NEIVA","OPORAPA","PAICOL","PALERMO","PALESTINA","PITAL","PITALITO","RIVERA","SALADOBLANCO","SAN AGUSTIN","SANTA MARIA","SUAZA","TARQUI","TELLO","TERUEL","TESALIA","TIMANA","VILLAVIEJA","YAGUARA"],"LA GUAJIRA":["ALBANIA","BARRANCAS","DIBULA","DISTRACCION","EL MOLINO","FONSECA","HATONUEVO","LA JAGUA DEL PILAR","MAICAO","MANAURE","RIOHACHA","SAN JUAN DEL CESAR","URIBIA","URUMITA","VILLANUEVA"],"MAGDALENA":["ALGARROBO","ARACATACA","ARIGUANI","CERRO SAN ANTONIO","CHIVOLO","CIENAGA","CONCORDIA","EL BANCO","EL PINON","EL RETEN","FUNDACION","GUAMAL","NUEVA GRANADA","PEDRAZA","PIJINO DEL CARMEN","PIVIJAY","PLATO","PUEBLO VIEJO","REMOLINO","SABANAS DE SAN ANGEL","SALAMINA","SAN SEBASTIAN DE BUENAVISTA","SAN ZENON","SANTA ANA","SANTA BARBARA DE PINTO","SANTA MARTA","SITIONUEVO","TENERIFE","ZAPAYAN","ZONA BANANERA"],"META":["ACACIAS","BARRANCA DE UPIA","CABUYARO","CASTILLA LA NUEVA","CUBARRAL","CUMARAL","EL CALVARIO","EL CASTILLO","EL DORADO","FUENTE DE ORO","GRANADA","GUAMAL","LA MACARENA","LEJANIAS","MAPIRIPAN","MESETAS","PUERTO CONCORDIA","PUERTO GAITAN","PUERTO LLERAS","PUERTO LOPEZ","PUERTO RICO","RESTREPO","SAN CARLOS DE GUAROA","SAN JUAN DE ARAMA","SAN JUANITO","SAN MARTIN","URIBE","VILLAVICENCIO","VISTA HERMOSA"],"NARINO":["ALBAN","ALDANA","ANCUYA","ARBOLEDA","BARBACOAS","BELEN","BUESACO","CHACHAGUI","COLON","CONSACA","CONTADERO","CORDOBA","CUASPUD","CUMBAL","CUMBITARA","EL CHARCO","EL PENOL","EL ROSARIO","EL TABLON DE GOMEZ","EL TAMBO","FRANCISCO PIZARRO","FUNES","GUACHUCAL","GUAITARILLA","GUALMATAN","ILES","IMUES","IPIALES","LA CRUZ","LA FLORIDA","LA LLANADA","LA TOLA","LA UNION","LEIVA","LINARES","LOS ANDES","MAGUI","MALLAMA","MOSQUERA","NARINO","OLAYA HERRERA","OSPINA","PASTO","POLICARPA","POTOSI","PROVIDENCIA","PUERRES","PUPIALES","RICAURTE","ROBERTO PAYAN","SAMANIEGO","SAN ANDRES DE TUMACO","SAN BERNARDO","SAN LORENZO","SAN PABLO","SAN PEDRO DE CARTAGO","SANDONA","SANTA BARBARA","SANTACRUZ","SAPUYES","TAMINANGO","TANGUA","TUQUERRES","YACUANQUER"],"NORTE DE SANTANDER":["ABREGO","ARBOLEDAS","BOCHALEMA","BUCARASICA","CACHIRA","CACOTA","CHINACOTA","CHITAGA","CONVENCION","CUCUTA","CUCUTILLA","DURANIA","EL CARMEN","EL TARRA","EL ZULIA","GRAMALOTE","HACARI","HERRAN","LA ESPERANZA","LA PLAYA","LABATECA","LOS PATIOS","LOURDES","MUTISCUA","OCANA","PAMPLONA","PAMPLONITA","PUERTO SANTANDER","RAGONVALIA","SALAZAR","SAN CALIXTO","SAN CAYETANO","SANTIAGO","SARDINATA","SILOS","TEORAMA","TIBU","TOLEDO","VILLA CARO","VILLA DEL ROSARIO"],"PUTUMAYO":["COLON","LEGUIZAMO","MOCOA","ORITO","PUERTO ASIS","PUERTO CAICEDO","PUERTO GUZMAN","SAN FRANCISCO","SAN MIGUEL","SANTIAGO","SIBUNDOY","VALLE DE GUAMEZ","VILLAGARZON"],"QUINDIO":["ARMENIA","BUENAVISTA","CALARCA","CIRCASIA","CORDOBA","FILANDIA","GENOVA","LA TEBAIDA","MONTENEGRO","PIJAO","QUIMBAYA","SALENTO"],"RISARALDA":["APIA","BALBOA","BELEN DE UMBRIA","DOSQUEBRADAS","GUATICA","LA CELIA","LA VIRGINIA","MARSELLA","MISTRATO","PEREIRA","PUEBLO RICO","QUINCHIA","SANTA ROSA DE CABAL","SANTUARIO"],"SANTANDER":["AGUADA","ALBANIA","ARATOCA","BARBOSA","BARICHARA","BARRANCABERMEJA","BETULIA","BOLIVAR","BUCARAMANGA","CABRERA","CALIFORNIA","CAPITANEJO","CARCASI","CEPITA","CERRITO","CHARALA","CHARTA","CHIMA","CHIPATA","CIMITARRA","CONCEPCION","CONFINES","CONTRATACION","COROMORO","CURITI","EL CARMEN DE CHUCURI","EL GUACAMAYO","EL PENON","EL PLAYON","ENCINO","ENCISO","FLORIAN","FLORIDABLANCA","GALAN","GAMBITA","GIRON","GUACA","GUADALUPE","GUAPOTA","GUAVATA","GUEPSA","HATO","JESUS MARIA","JORDAN","LA BELLEZA","LA PAZ","LANDAZURI","LEBRIJA","LOS SANTOS","MACARAVITA","MALAGA","MATANZA","MOGOTES","MOLAGAVITA","OCAMONTE","OIBA","ONZAGA","PALMAR","PALMAS DEL SOCORRO","PARAMO","PIEDECUESTA","PINCHOTE","PUENTE NACIONAL","PUERTO PARRA","PUERTO WILCHES","RIONEGRO","SABANA DE TORRES","SAN ANDRES","SAN BENITO","SAN GIL","SAN JOAQUIN","SAN JOSE DE MIRANDA","SAN MIGUEL","SAN VICENTE DE CHUCURI","SANTA BARBARA","SANTA HELENA DEL OPON","SIMACOTA","SOCORRO","SUAITA","SUCRE","SURATA","TONA","VALLE DE SAN JOSE","VELEZ","VETAS","VILLANUEVA","ZAPATOCA"],"SUCRE":["BUENAVISTA","CAIMITO","CHALAN","COLOSO","COROZAL","COVENAS","EL ROBLE","GALERAS","GUARANDA","LA UNION","LOS PALMITOS","MAJAGUAL","MORROA","OVEJAS","PALMITO","SAMPUES","SAN BENITO ABAD","SAN JUAN DE BETULIA","SAN LUIS DE SINCE","SAN MARCOS","SAN ONOFRE","SAN PEDRO","SANTIAGO DE TOLU","SINCELEJO","SUCRE","TOLU VIEJO"],"TOLIMA":["ALPUJARRA","ALVARADO","AMBALEMA","ANZOATEGUI","ARMERO","ATACO","CAJAMARCA","CARMEN DE APICALA","CASABIANCA","CHAPARRAL","COELLO","COYAIMA","CUNDAY","DOLORES","ESPINAL","FALAN","FLANDES","FRESNO","GUAMO","HERVEO","HONDA","IBAGUE","ICONONZO","LERIDA","LIBANO","MARIQUITA","MELGAR","MURILLO","NATAGAIMA","ORTEGA","PALOCABILDO","PIEDRAS","PLANADAS","PRADO","PURIFICACION","RIO BLANCO","RONCESVALLES","ROVIRA","SALDANA","SAN ANTONIO","SAN LUIS","SANTA ISABEL","SUAREZ","VALLE DE SAN JUAN","VENADILLO","VILLAHERMOSA","VILLARRICA"],"VALLE DEL CAUCA":["ALCALA","ANDALUCIA","ANSERMANUEVO","ARGELIA","BOLIVAR","BUENAVENTURA","BUGALAGRANDE","CAICEDONIA","CALI","CALIMA","CANDELARIA","CARTAGO","DAGUA","EL AGUILA","EL CAIRO","EL CERRITO","EL DOVIO","FLORIDA","GINEBRA","GUACARI","GUADALAJARA DE BUGA","JAMUNDI","LA CUMBRE","LA UNION","LA VICTORIA","OBANDO","PALMIRA","PRADERA","RESTREPO","RIOFRIO","ROLDANILLO","SAN PEDRO","SEVILLA","TORO","TRUJILLO","TULUA","ULLOA","VERSALLES","VIJES","YOTOCO","YUMBO","ZARZAL"],"VAUPES":["CARURU","MITU","PACOA","PAPUNAUA","TARAIRA","YAVARATE"],"VICHADA":["CUMARIBO","LA PRIMAVERA","PUERTO CARRENO","SANTA ROSALIA"]};
+
+const LOCALIDADES_BOGOTA = [
+  {codigo:'01', nombre:'USAQUÉN'},
+  {codigo:'02', nombre:'CHAPINERO'},
+  {codigo:'03', nombre:'SANTA FE'},
+  {codigo:'04', nombre:'SAN CRISTÓBAL'},
+  {codigo:'05', nombre:'USME'},
+  {codigo:'06', nombre:'TUNJUELITO'},
+  {codigo:'07', nombre:'BOSA'},
+  {codigo:'08', nombre:'KENNEDY'},
+  {codigo:'09', nombre:'FONTIBÓN'},
+  {codigo:'10', nombre:'ENGATIVÁ'},
+  {codigo:'11', nombre:'SUBA'},
+  {codigo:'12', nombre:'BARRIOS UNIDOS'},
+  {codigo:'13', nombre:'TEUSAQUILLO'},
+  {codigo:'14', nombre:'LOS MÁRTIRES'},
+  {codigo:'15', nombre:'ANTONIO NARIÑO'},
+  {codigo:'16', nombre:'PUENTE ARANDA'},
+  {codigo:'17', nombre:'LA CANDELARIA'},
+  {codigo:'18', nombre:'RAFAEL URIBE URIBE'},
+  {codigo:'19', nombre:'CIUDAD BOLÍVAR'},
+  {codigo:'20', nombre:'SUMAPAZ'}
+];
+
+const AFILIACIONES = {
+  EPS: ["COOSALUD EPS-S","NUEVA EPS","MUTUAL SER","SALUD MÍA","ALIANSALUD EPS","SALUD TOTAL EPS S.A.","EPS SANITAS","EPS SURA","FAMISANAR","SERVICIO OCCIDENTAL DE SALUD EPS SOS","COMFENALCO VALLE EPS","COMPENSAR EPS","EPM - EMPRESAS PÚBLICAS DE MEDELLÍN","FONDO DE PASIVO SOCIAL DE FERROCARRILES NACIONALES DE COLOMBIA","CAJACOPI ATLÁNTICO","CAPRESOCA","COMFACHOCÓ","COMFAORIENTE","EPS FAMILIAR DE COLOMBIA","ASMET SALUD","EMSSANAR E.S.S.","CAPITAL SALUD EPS-S","SAVIA SALUD EPS","DUSAKAWI EPSI","ASOCIACIÓN INDÍGENA DEL CAUCA EPSI","ANAS WAYUU EPSI","MALLAMAS EPSI","PIJAOS SALUD EPSI"],
+  AFP: ["COLPENSIONES","COLFONDOS","PORVENIR","PROTECCIÓN","SKANDIA","POSITIVA"],
+  ARL: ["ARL POSITIVA","ARL SURA","ARL COLMENA","ARL AXA COLPATRIA","ARL SEGUROS BOLÍVAR","ARL LA EQUIDAD","ARL MAPFRE","ARL SEGUROS ALFA","ARL SEGUROS AURORA","ARL LIBERTY / HDI"]
+};
+
+const API_BARRIOS_BOGOTA = 'https://gis.transmilenio.gov.co/arcgis/rest/services/consulta_informacion_basica_IDECA/FeatureServer/7/query';
+
+/* ===================== NAVEGACIÓN DE PASOS ===================== */
+const totalPasos = 9;
+let pasoActual = 1;
+
+const pasos = document.querySelectorAll('.paso');
+const progresoTexto = document.getElementById('progresoTexto');
+const progresoRelleno = document.getElementById('progresoRelleno');
+const btnAtras = document.getElementById('btnAtras');
+const btnSiguiente = document.getElementById('btnSiguiente');
+const navBotones = document.getElementById('navBotones');
+
+function mostrarPaso(n){
+  pasos.forEach(p => p.classList.remove('activo'));
+  document.querySelector(`.paso[data-paso="${n}"]`).classList.add('activo');
+  progresoTexto.textContent = `Paso ${n} de ${totalPasos}`;
+  progresoRelleno.style.width = (n/totalPasos*100) + '%';
+  btnAtras.style.visibility = (n === 1) ? 'hidden' : 'visible';
+  btnSiguiente.textContent = (n === totalPasos) ? 'Revisar' : 'Siguiente →';
+  window.scrollTo({top:0, behavior:'smooth'});
+  // El paso de firma estaba oculto (display:none) hasta ahora, así que el canvas
+  // medía 0x0 y el dedo no podía dibujar. Lo reajustamos justo cuando se hace visible.
+  if(n === 8){
+    setTimeout(ajustarCanvasFirma, 50);
+    setTimeout(ajustarCanvasFirma, 300); // respaldo por si el primer intento fue muy pronto
+  }
+}
+
+function limpiarErroresPaso(contenedor){
+  contenedor.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+  contenedor.querySelectorAll('.msg-error').forEach(el => el.style.display = 'none');
+}
+function mostrarError(campo, idMensaje, texto){
+  if(campo){
+    campo.classList.add('error');
+    selectoresBuscables?.get(campo)?.input.classList.add('error');
+  }
+  const msg=document.getElementById(idMensaje);
+  if(msg){if(texto) msg.textContent=texto;msg.style.display='block';}
+  return false;
+}
+function validarPaso(n){
+  const contenedor=document.querySelector(`.paso[data-paso="${n}"]`);
+  limpiarErroresPaso(contenedor);
+  let valido=true;
+
+  if(n===1){
+    if(!tipoCita) valido=mostrarError(null,'errorCita','Elija una opción para continuar.') && valido;
+    else if(tipoCita==='brigada' && (!selCitaDia.value || !document.getElementById('citaMes').value || !selCitaAnio.value)){
+      valido=mostrarError(null,'errorCita','Elija el día, mes y año de su cita.') && valido;
+    }
+  }
+
+  if(n===2){
+    if(!origenPaciente) valido=mostrarError(null,'errorOrigen','Elija si viene por una empresa o por su cuenta.') && valido;
+    else if(origenPaciente==='particular'){
+      if(!comoSeEntero) valido=mostrarError(null,'errorOrigen','Seleccione cómo se enteró de nosotros.') && valido;
+      else if(comoSeEntero==='Otro' && !document.getElementById('otroComoSeEntero').value.trim()){
+        valido=mostrarError(document.getElementById('otroComoSeEntero'),'errorOrigen','Escriba cuál fue el otro medio.') && valido;
+      }
+    }
+  }
+
+  if(n===3){
+    const tipo=document.getElementById('tipoDocumento');
+    const numero=document.getElementById('numeroDocumento');
+    if(!tipo.value) valido=mostrarError(tipo,'errorTipoDocumento') && valido;
+    if(!validarNumeroDocumento()) valido=mostrarError(numero,'errorNumeroDocumento',mensajeDocumentoActual()) && valido;
+  }
+
+  if(n===4){
+    [['primerApellido','errorPrimerApellido',true],['segundoApellido','errorSegundoApellido',false],['primerNombre','errorPrimerNombre',true],['otrosNombres','errorOtrosNombres',false]].forEach(([id,err,obligatorio])=>{
+      const campo=document.getElementById(id); const valor=campo.value.trim();
+      if((obligatorio && (!valor || valor.length<2)) || (valor && !REGEX_NOMBRE.test(valor))){valido=mostrarError(campo,err) && valido;}
+    });
+  }
+
+  if(n===5){
+    const fecha=obtenerFechaNacimiento();
+    if(!fecha || !esEdadMinimaValida(fecha)) valido=mostrarError(document.getElementById('fnAnio'),'errorFechaNacimiento') && valido;
+    if(!actualizarLugarNacimientoFinal()) valido=mostrarError(document.getElementById('tipoPaisNacimiento'),'errorLugarNacimiento') && valido;
+    [['genero','errorGenero'],['estadoCivil','errorEstadoCivil'],['nivelEducativo','errorNivelEducativo']].forEach(([id,err])=>{
+      const c=document.getElementById(id); if(!c.value) valido=mostrarError(c,err) && valido;
+    });
+    if(!validarCorreo()) valido=mostrarError(document.getElementById('correo'),'errorCorreo') && valido;
+  }
+
+  if(n===6){
+    const direccion=contenedor.querySelector('[name="direccion"]');
+    if(!direccion.value.trim()){direccion.classList.add('error');valido=false;}
+    if(!municipioResidencia.value){
+      valido=mostrarError(municipioResidencia,'errorMunicipioResidencia') && valido;
+    }
+    if(esBogotaResidencia() && !localidadBogota.value){
+      valido=mostrarError(localidadBogota,'errorLocalidadBogota') && valido;
+    }
+    actualizarResidenciaFinal();
+    if(!validarCelular()) valido=mostrarError(document.getElementById('celular'),'errorCelular') && valido;
+    contenedor.querySelectorAll('[required].error').forEach(c=>{
+      const msg=c.nextElementSibling;
+      if(msg && msg.classList.contains('msg-error')) msg.style.display='block';
+    });
+  }
+
+  if(n===8){
+    const okFoto=fotoTomada===true && fotoBase64 && fotoBase64.length>100;
+    const okFirma=firmaHecha===true;
+    document.getElementById('errorFoto').style.display=okFoto?'none':'block';
+    document.getElementById('errorFirma').style.display=okFirma?'none':'block';
+    if(!okFoto || !okFirma) valido=false;
+  }
+
+  if(n===9){
+    const autorizo=document.getElementById('checkAutorizo').checked;
+    const verdad=document.getElementById('checkVerdad').checked;
+    if(!autorizo || !verdad){document.getElementById('errorAutorizacion').style.display='block';valido=false;}
+  }
+  return valido;
+}
+
+btnSiguiente.addEventListener('click', async () => {
+  if(!validarPaso(pasoActual)) return;
+
+  if(pasoActual === 3 && !ordenYaConsultada){
+    await buscarOrdenEnSheetMaestro();
+    return; // Recepción ve el panel (si aplica) y pulsa "Continuar" para seguir.
+  }
+
+  if(pasoActual === totalPasos){
+    enviarFormulario();
+    return;
+  }
+  pasoActual++;
+  mostrarPaso(pasoActual);
+});
+
+btnAtras.addEventListener('click', () => {
+  if(pasoActual === 1) return;
+  if(pasoActual === 4) resetearPanelOrden();
+  pasoActual--;
+  mostrarPaso(pasoActual);
+});
+
+
+/* ===================== SELECTOR BUSCABLE REUTILIZABLE ===================== */
+const selectoresBuscables = new WeakMap();
+
+function crearSelectorBuscable(select, {
+  placeholder='Escriba para buscar',
+  mostrarOtroSiempre=false,
+  seleccionarTextoAlAbrir=true
+}={}){
+  if(selectoresBuscables.has(select)) return selectoresBuscables.get(select);
+
+  const contenedor=document.createElement('div');
+  contenedor.className='selector-buscable';
+  const control=document.createElement('div');
+  control.className='selector-buscable-control';
+  const input=document.createElement('input');
+  input.type='text';
+  input.className='selector-buscable-input';
+  input.placeholder=placeholder;
+  input.autocomplete='off';
+  input.spellcheck=false;
+  input.setAttribute('role','combobox');
+  input.setAttribute('aria-autocomplete','list');
+  input.setAttribute('aria-expanded','false');
+  input.id=`${select.id}-busqueda`;
+
+  const acciones=document.createElement('div');
+  acciones.className='selector-buscable-acciones';
+  const limpiar=document.createElement('button');
+  limpiar.type='button';
+  limpiar.className='selector-buscable-btn';
+  limpiar.title='Limpiar';
+  limpiar.setAttribute('aria-label','Limpiar selección');
+  limpiar.textContent='×';
+  const abrirBtn=document.createElement('button');
+  abrirBtn.type='button';
+  abrirBtn.className='selector-buscable-btn';
+  abrirBtn.title='Mostrar opciones';
+  abrirBtn.setAttribute('aria-label','Mostrar opciones');
+  abrirBtn.textContent='⌄';
+  acciones.append(limpiar,abrirBtn);
+  control.append(input,acciones);
+
+  const lista=document.createElement('div');
+  lista.className='selector-buscable-lista';
+  lista.setAttribute('role','listbox');
+  lista.id=`${select.id}-lista`;
+  input.setAttribute('aria-controls',lista.id);
+  contenedor.append(control,lista);
+  select.insertAdjacentElement('afterend',contenedor);
+  select.classList.add('selector-buscable-original');
+  select.tabIndex=-1;
+
+  const etiqueta=document.querySelector(`label[for="${select.id}"]`);
+  if(etiqueta) etiqueta.setAttribute('for',input.id);
+
+  let opcionesFiltradas=[];
+  let indiceActivo=-1;
+
+  const todasOpciones=()=>[...select.options].filter(op=>!op.disabled);
+  const normalizarBusqueda=valor=>String(valor||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();
+
+  function cerrar(){
+    contenedor.classList.remove('abierto');
+    input.setAttribute('aria-expanded','false');
+    indiceActivo=-1;
+  }
+
+  function pintar(query='',mostrarTodas=false){
+    const q=normalizarBusqueda(query);
+    const opciones=todasOpciones();
+    const opcionVacia=opciones.find(op=>op.value==='');
+    const opcionOtro=opciones.find(op=>op.value==='__OTRO__');
+    let candidatas=opciones.filter(op=>op.value!=='' && op.value!=='__OTRO__');
+
+    if(q && !mostrarTodas){
+      candidatas=candidatas.filter(op=>{
+        const texto=normalizarBusqueda(`${op.textContent} ${op.value}`);
+        return texto.includes(q);
+      });
+    }
+
+    opcionesFiltradas=[];
+    if(!q && opcionVacia) opcionesFiltradas.push(opcionVacia);
+    opcionesFiltradas.push(...candidatas);
+    if(opcionOtro && (mostrarOtroSiempre || !q || candidatas.length===0)) opcionesFiltradas.push(opcionOtro);
+
+    lista.innerHTML='';
+    if(!opcionesFiltradas.length){
+      const vacio=document.createElement('div');
+      vacio.className='selector-buscable-vacio';
+      vacio.textContent='No se encontraron coincidencias.';
+      lista.appendChild(vacio);
+      return;
+    }
+
+    opcionesFiltradas.forEach((opcion,indice)=>{
+      const boton=document.createElement('button');
+      boton.type='button';
+      boton.className='selector-buscable-opcion';
+      if(opcion.value==='__OTRO__') boton.classList.add('otro');
+      if(opcion.value===select.value) boton.classList.add('seleccionada');
+      boton.textContent=opcion.textContent.trim();
+      boton.setAttribute('role','option');
+      boton.setAttribute('aria-selected',opcion.value===select.value?'true':'false');
+      boton.addEventListener('mousedown',evento=>evento.preventDefault());
+      boton.addEventListener('click',()=>seleccionar(opcion));
+      boton.addEventListener('mouseenter',()=>{indiceActivo=indice;actualizarActivo();});
+      lista.appendChild(boton);
+    });
+  }
+
+  function actualizarActivo(){
+    [...lista.querySelectorAll('.selector-buscable-opcion')].forEach((boton,indice)=>{
+      boton.classList.toggle('activa',indice===indiceActivo);
+      if(indice===indiceActivo) boton.scrollIntoView({block:'nearest'});
+    });
+  }
+
+  function abrir({todas=true}={}){
+    if(input.disabled) return;
+    contenedor.classList.add('abierto');
+    input.setAttribute('aria-expanded','true');
+    pintar(input.value,todas);
+    if(seleccionarTextoAlAbrir && select.value && document.activeElement===input){
+      input.select();
+    }
+  }
+
+  function seleccionar(opcion){
+    select.value=opcion.value;
+    input.value=opcion.value ? opcion.textContent.trim() : '';
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+    cerrar();
+  }
+
+  function limpiarSeleccion({enfocar=true}={}){
+    select.value='';
+    input.value='';
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+    if(enfocar){input.focus();abrir({todas:true});}
+  }
+
+  function refrescar(){
+    const seleccionada=select.options[select.selectedIndex];
+    input.value=seleccionada && seleccionada.value ? seleccionada.textContent.trim() : '';
+    input.disabled=Boolean(select.disabled);
+    limpiar.disabled=Boolean(select.disabled);
+    abrirBtn.disabled=Boolean(select.disabled);
+    if(input.disabled) cerrar();
+  }
+
+  input.addEventListener('focus',()=>abrir({todas:true}));
+  input.addEventListener('click',()=>abrir({todas:true}));
+  input.addEventListener('input',()=>{
+    if(select.value){
+      select.value='';
+      select.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    contenedor.classList.add('abierto');
+    input.setAttribute('aria-expanded','true');
+    pintar(input.value,false);
+  });
+  input.addEventListener('keydown',evento=>{
+    if(evento.key==='ArrowDown'){
+      evento.preventDefault();
+      if(!contenedor.classList.contains('abierto')) abrir({todas:true});
+      indiceActivo=Math.min(indiceActivo+1,opcionesFiltradas.length-1);
+      actualizarActivo();
+    }else if(evento.key==='ArrowUp'){
+      evento.preventDefault();
+      indiceActivo=Math.max(indiceActivo-1,0);
+      actualizarActivo();
+    }else if(evento.key==='Enter' && indiceActivo>=0 && opcionesFiltradas[indiceActivo]){
+      evento.preventDefault();
+      seleccionar(opcionesFiltradas[indiceActivo]);
+    }else if(evento.key==='Escape'){
+      cerrar();
+    }
+  });
+  input.addEventListener('blur',()=>setTimeout(()=>{
+    if(!contenedor.contains(document.activeElement)) cerrar();
+  },140));
+  limpiar.addEventListener('click',()=>limpiarSeleccion());
+  abrirBtn.addEventListener('click',()=>{
+    if(contenedor.classList.contains('abierto')) cerrar();
+    else{input.focus();abrir({todas:true});}
+  });
+
+  document.addEventListener('click',evento=>{
+    if(!contenedor.contains(evento.target)) cerrar();
+  });
+
+  const api={refrescar,abrir,cerrar,limpiar:limpiarSeleccion,input,select};
+  selectoresBuscables.set(select,api);
+  refrescar();
+  return api;
+}
+
+/* ===================== RESIDENCIA: MUNICIPIO, LOCALIDAD Y BARRIO ===================== */
+const municipioResidencia = document.getElementById('municipioResidencia');
+const bloqueBogota = document.getElementById('bloqueBogota');
+const bloqueFueraBogota = document.getElementById('bloqueFueraBogota');
+const localidadBogota = document.getElementById('localidadBogota');
+const barrioBogota = document.getElementById('barrioBogota');
+const otroBarrioBogota = document.getElementById('otroBarrioBogota');
+const bloqueOtroBarrioBogota = document.getElementById('bloqueOtroBarrioBogota');
+const barrioFueraBogota = document.getElementById('barrioFueraBogota');
+const localidadFinal = document.getElementById('localidadFinal');
+const barrioFinal = document.getElementById('barrioFinal');
+const estadoBarrios = document.getElementById('estadoBarrios');
+
+function normalizarComparacion(valor){
+  return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+}
+
+function datosMunicipioResidencia(){
+  const opcion = municipioResidencia.options[municipioResidencia.selectedIndex];
+  if(!opcion || !opcion.value) return {departamento:'', municipio:'', texto:''};
+  return {
+    departamento: opcion.dataset.departamento || '',
+    municipio: opcion.dataset.municipio || '',
+    texto: opcion.textContent || ''
+  };
+}
+
+function esBogotaResidencia(){
+  const dato = datosMunicipioResidencia();
+  return normalizarComparacion(dato.departamento) === 'BOGOTA D.C.' ||
+         normalizarComparacion(dato.municipio) === 'BOGOTA D.C.' ||
+         normalizarComparacion(dato.municipio) === 'BOGOTA';
+}
+
+function poblarMunicipiosResidencia(){
+  const registros = [];
+  Object.entries(MUNICIPIOS_POR_DEPARTAMENTO).forEach(([departamento, municipios])=>{
+    municipios.forEach(municipio=>registros.push({departamento, municipio}));
+  });
+  registros.sort((a,b)=>{
+    const aBogota = normalizarComparacion(a.departamento)==='BOGOTA D.C.' ? 0 : 1;
+    const bBogota = normalizarComparacion(b.departamento)==='BOGOTA D.C.' ? 0 : 1;
+    return aBogota-bBogota || a.municipio.localeCompare(b.municipio,'es') || a.departamento.localeCompare(b.departamento,'es');
+  });
+
+  registros.forEach(({departamento,municipio})=>{
+    const opcion=document.createElement('option');
+    opcion.value=`${departamento}|||${municipio}`;
+    opcion.dataset.departamento=departamento;
+    opcion.dataset.municipio=municipio;
+    opcion.textContent=normalizarComparacion(departamento)==='BOGOTA D.C.'
+      ? 'BOGOTÁ D.C.'
+      : `${municipio} (${departamento})`;
+    municipioResidencia.appendChild(opcion);
+  });
+
+  const bogota=[...municipioResidencia.options].find(op=>normalizarComparacion(op.dataset.departamento)==='BOGOTA D.C.');
+  if(bogota) municipioResidencia.value=bogota.value;
+}
+
+function poblarLocalidades(){
+  LOCALIDADES_BOGOTA.forEach(localidad=>{
+    const opcion=document.createElement('option');
+    opcion.value=localidad.nombre;
+    opcion.dataset.codigo=localidad.codigo;
+    opcion.textContent=localidad.nombre;
+    localidadBogota.appendChild(opcion);
+  });
+}
+
+function actualizarResidenciaFinal(){
+  const dato=datosMunicipioResidencia();
+  if(esBogotaResidencia()){
+    localidadFinal.value=localidadBogota.value || '';
+    const barrioElegido=barrioBogota.value==='__OTRO__'
+      ? otroBarrioBogota.value.trim()
+      : barrioBogota.value.trim();
+    barrioFinal.value=barrioElegido;
+  }else{
+    localidadFinal.value='';
+    const barrio=barrioFueraBogota.value.trim();
+    barrioFinal.value=barrio && dato.municipio
+      ? `${barrio.toUpperCase()} (${dato.municipio.toUpperCase()})`
+      : '';
+  }
+}
+
+async function cargarBarriosBogota(){
+  const opcion=localidadBogota.options[localidadBogota.selectedIndex];
+  const codigo=opcion?.dataset?.codigo || '';
+  barrioBogota.innerHTML='<option value="">Cargando barrios...</option>';
+  barrioBogota.disabled=true;
+  if(typeof buscadorBarrioBogota!=='undefined'){
+    buscadorBarrioBogota.input.placeholder='Cargando barrios...';
+    buscadorBarrioBogota.refrescar();
+  }
+  estadoBarrios.textContent='';
+  estadoBarrios.className='estado-carga';
+  bloqueOtroBarrioBogota.classList.add('oculto');
+  otroBarrioBogota.value='';
+  actualizarResidenciaFinal();
+
+  if(!codigo){
+    barrioBogota.innerHTML='<option value="">Primero seleccione la localidad</option>';
+    if(typeof buscadorBarrioBogota!=='undefined'){
+      buscadorBarrioBogota.input.placeholder='Primero seleccione la localidad';
+      buscadorBarrioBogota.refrescar();
+    }
+    return;
+  }
+
+  try{
+    const params=new URLSearchParams({
+      where:`codigo_localidad_barrio_planeac='${codigo}' OR codigo_localidad_barrio_planeac='${Number(codigo)}'`,
+      outFields:'nombre_barrio_planeacion,estado_barrio_planeacion',
+      returnGeometry:'false',
+      orderByFields:'nombre_barrio_planeacion ASC',
+      resultRecordCount:'5000',
+      f:'json'
+    });
+    const respuesta=await fetch(`${API_BARRIOS_BOGOTA}?${params.toString()}`);
+    if(!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
+    const data=await respuesta.json();
+    if(data.error) throw new Error(data.error.message || 'ArcGIS no respondió correctamente');
+    const nombres=[...new Set((data.features || [])
+      .map(item=>String(item?.attributes?.nombre_barrio_planeacion || '').trim())
+      .filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b,'es'));
+
+    barrioBogota.innerHTML='<option value="">Toque para elegir (opcional)</option>';
+    nombres.forEach(nombre=>{
+      const opcionBarrio=document.createElement('option');
+      opcionBarrio.value=nombre;
+      opcionBarrio.textContent=nombre;
+      barrioBogota.appendChild(opcionBarrio);
+    });
+    const otro=document.createElement('option');
+    otro.value='__OTRO__';
+    otro.textContent='OTRO BARRIO / NO APARECE';
+    barrioBogota.appendChild(otro);
+    barrioBogota.disabled=false;
+    buscadorBarrioBogota.input.placeholder='Escriba el barrio o sector';
+    buscadorBarrioBogota.refrescar();
+    estadoBarrios.textContent=`${nombres.length} barrios y sectores disponibles.`;
+    estadoBarrios.className='estado-carga ok';
+  }catch(error){
+    barrioBogota.innerHTML='<option value="">No fue posible cargar la lista</option><option value="__OTRO__">ESCRIBIR EL BARRIO MANUALMENTE</option>';
+    barrioBogota.disabled=false;
+    buscadorBarrioBogota.input.placeholder='Escriba el barrio manualmente';
+    buscadorBarrioBogota.refrescar();
+    estadoBarrios.textContent='No se pudo consultar la base de barrios. Puede escribirlo manualmente.';
+    estadoBarrios.className='estado-carga aviso';
+  }
+}
+
+function cambiarMunicipioResidencia(){
+  const dato=datosMunicipioResidencia();
+  const hayMunicipio=Boolean(dato.texto);
+  const bogota=hayMunicipio && esBogotaResidencia();
+  bloqueBogota.classList.toggle('oculto',!bogota);
+  bloqueFueraBogota.classList.toggle('oculto',!hayMunicipio || bogota);
+  if(bogota && localidadBogota.value && barrioBogota.disabled) cargarBarriosBogota();
+  actualizarResidenciaFinal();
+}
+
+municipioResidencia.addEventListener('change',cambiarMunicipioResidencia);
+localidadBogota.addEventListener('change',cargarBarriosBogota);
+barrioBogota.addEventListener('change',()=>{
+  const otro=barrioBogota.value==='__OTRO__';
+  bloqueOtroBarrioBogota.classList.toggle('oculto',!otro);
+  if(otro) otroBarrioBogota.focus();
+  actualizarResidenciaFinal();
+});
+otroBarrioBogota.addEventListener('input',actualizarResidenciaFinal);
+barrioFueraBogota.addEventListener('input',actualizarResidenciaFinal);
+
+poblarMunicipiosResidencia();
+poblarLocalidades();
+const buscadorMunicipioResidencia=crearSelectorBuscable(municipioResidencia,{
+  placeholder:'Escriba el municipio, por ejemplo CHÍA'
+});
+const buscadorLocalidadBogota=crearSelectorBuscable(localidadBogota,{
+  placeholder:'Escriba la localidad, por ejemplo FONTIBÓN'
+});
+const buscadorBarrioBogota=crearSelectorBuscable(barrioBogota,{
+  placeholder:'Primero seleccione la localidad',
+  mostrarOtroSiempre:true
+});
+cambiarMunicipioResidencia();
+
+/* ===================== AFILIACIONES CON LISTAS Y OPCIÓN OTRO ===================== */
+function prepararSelectorAfiliacion(prefijo,tipo){
+  const selector=document.getElementById(`${prefijo}Opcion`);
+  AFILIACIONES[tipo].forEach(nombre=>{
+    const opcion=document.createElement('option');
+    opcion.value=nombre;
+    opcion.textContent=nombre;
+    selector.appendChild(opcion);
+  });
+  const otro=document.createElement('option');
+  otro.value='__OTRO__';
+  otro.textContent='OTRO / NO APARECE';
+  selector.appendChild(otro);
+  selector.addEventListener('change',()=>{
+    const bloque=document.getElementById(`${prefijo}OtroBloque`);
+    bloque.classList.toggle('oculto',selector.value!=='__OTRO__');
+    if(selector.value==='__OTRO__') document.getElementById(`${prefijo}Otro`).focus();
+  });
+  return crearSelectorBuscable(selector,{
+    placeholder:`Escriba para buscar ${tipo} o déjelo vacío`,
+    mostrarOtroSiempre:true
+  });
+}
+function obtenerAfiliacionFinal(prefijo){
+  const selector=document.getElementById(`${prefijo}Opcion`);
+  if(selector.value==='__OTRO__') return document.getElementById(`${prefijo}Otro`).value.trim();
+  return selector.value.trim();
+}
+prepararSelectorAfiliacion('eps','EPS');
+prepararSelectorAfiliacion('afp','AFP');
+prepararSelectorAfiliacion('arl','ARL');
+
+/* ===================== FECHA DE NACIMIENTO Y EDAD ===================== */
+const selDia=document.getElementById('fnDia');
+const selMes=document.getElementById('fnMes');
+const selAnio=document.getElementById('fnAnio');
+const anioActual=new Date().getFullYear();
+for(let a=anioActual-5;a>=anioActual-105;a--){const op=document.createElement('option');op.value=a;op.textContent=a;selAnio.appendChild(op);}
+function actualizarDiasNacimiento(){
+  const seleccionado=selDia.value;
+  const y=Number(selAnio.value)||anioActual;
+  const m=Number(selMes.value)||1;
+  const total=new Date(y,m,0).getDate();
+  selDia.innerHTML='<option value="">Día</option>';
+  for(let d=1;d<=total;d++){const op=document.createElement('option');op.value=String(d).padStart(2,'0');op.textContent=d;selDia.appendChild(op);}
+  if(Number(seleccionado)<=total) selDia.value=seleccionado;
+}
+actualizarDiasNacimiento();
+selMes.addEventListener('change',()=>{actualizarDiasNacimiento();actualizarEdadMostrada();});
+selAnio.addEventListener('change',()=>{actualizarDiasNacimiento();actualizarEdadMostrada();});
+selDia.addEventListener('change',actualizarEdadMostrada);
+function obtenerFechaNacimiento(){
+  if(!selAnio.value || !selMes.value || !selDia.value) return null;
+  const y=Number(selAnio.value),m=Number(selMes.value)-1,d=Number(selDia.value);
+  const f=new Date(y,m,d,12,0,0);
+  if(f.getFullYear()!==y || f.getMonth()!==m || f.getDate()!==d) return null;
+  return f;
+}
+function esEdadMinimaValida(fecha){
+  const hoy=new Date(); hoy.setHours(12,0,0,0);
+  const limite=new Date(hoy.getFullYear()-5,hoy.getMonth(),hoy.getDate(),12,0,0);
+  return fecha<=limite;
+}
+function calcularEdadDetallada(fecha){
+  const hoy=new Date(); hoy.setHours(12,0,0,0);
+  let anos=hoy.getFullYear()-fecha.getFullYear();
+  let meses=hoy.getMonth()-fecha.getMonth();
+  let dias=hoy.getDate()-fecha.getDate();
+  if(dias<0){meses--;dias+=new Date(hoy.getFullYear(),hoy.getMonth(),0).getDate();}
+  if(meses<0){anos--;meses+=12;}
+  return {anos,meses,dias};
+}
+function actualizarEdadMostrada(){
+  const caja=document.getElementById('edadCalculada'); const fecha=obtenerFechaNacimiento();
+  caja.classList.remove('invalida');
+  if(!fecha){caja.textContent='Seleccione la fecha completa para calcular la edad.';return;}
+  const e=calcularEdadDetallada(fecha);
+  caja.textContent=`Usted tiene ${e.anos} años, ${e.meses} meses y ${e.dias} días.`;
+  if(!esEdadMinimaValida(fecha)){caja.textContent+=' No se permiten registros de menores de 5 años.';caja.classList.add('invalida');}
+}
+
+/* ===================== PASO 1: FECHA DE LA CITA ===================== */
+let tipoCita = ''; // 'hoy' | 'brigada'
+
+const selCitaDia = document.getElementById('citaDia');
+const selCitaAnio = document.getElementById('citaAnio');
+for(let d=1; d<=31; d++){
+  const op = document.createElement('option');
+  op.value = String(d).padStart(2,'0');
+  op.textContent = d;
+  selCitaDia.appendChild(op);
+}
+for(let a=anioActual; a<=anioActual+1; a++){
+  const op = document.createElement('option');
+  op.value = a;
+  op.textContent = a;
+  selCitaAnio.appendChild(op);
+}
+
+const btnCitaHoy = document.getElementById('btnCitaHoy');
+const btnCitaBrigada = document.getElementById('btnCitaBrigada');
+const calendarioBrigada = document.getElementById('calendarioBrigada');
+
+btnCitaHoy.addEventListener('click', () => {
+  tipoCita = 'hoy';
+  btnCitaHoy.classList.add('seleccionada');
+  btnCitaBrigada.classList.remove('seleccionada');
+  calendarioBrigada.classList.remove('activo');
+  document.getElementById('errorCita').style.display = 'none';
+});
+
+btnCitaBrigada.addEventListener('click', () => {
+  tipoCita = 'brigada';
+  btnCitaBrigada.classList.add('seleccionada');
+  btnCitaHoy.classList.remove('seleccionada');
+  calendarioBrigada.classList.add('activo');
+  document.getElementById('errorCita').style.display = 'none';
+});
+
+/* ===================== PASO 2: ORIGEN DEL PACIENTE ===================== */
+let origenPaciente='';
+let comoSeEntero='';
+const btnOrigenEmpresa=document.getElementById('btnOrigenEmpresa');
+const btnOrigenParticular=document.getElementById('btnOrigenParticular');
+const subpanelEmpresa=document.getElementById('subpanelEmpresa');
+const subpanelParticular=document.getElementById('subpanelParticular');
+const campoOtroOrigen=document.getElementById('campoOtroOrigen');
+btnOrigenEmpresa.addEventListener('click',()=>{
+  origenPaciente='empresa';btnOrigenEmpresa.classList.add('seleccionada');btnOrigenParticular.classList.remove('seleccionada');
+  subpanelEmpresa.classList.add('activo');subpanelParticular.classList.remove('activo');document.getElementById('errorOrigen').style.display='none';
+});
+btnOrigenParticular.addEventListener('click',()=>{
+  origenPaciente='particular';btnOrigenParticular.classList.add('seleccionada');btnOrigenEmpresa.classList.remove('seleccionada');
+  subpanelParticular.classList.add('activo');subpanelEmpresa.classList.remove('activo');document.getElementById('errorOrigen').style.display='none';
+});
+document.querySelectorAll('.chip-opcion').forEach(chip=>{chip.addEventListener('click',()=>{
+  document.querySelectorAll('.chip-opcion').forEach(c=>c.classList.remove('seleccionada'));chip.classList.add('seleccionada');comoSeEntero=chip.dataset.valor;
+  campoOtroOrigen.classList.toggle('oculto',comoSeEntero!=='Otro');
+  if(comoSeEntero!=='Otro') document.getElementById('otroComoSeEntero').value='';
+  document.getElementById('errorOrigen').style.display='none';
+});});
+function obtenerComoSeEnteroFinal(){
+  const empresa=document.getElementById('nombreEmpresaOrigen').value.trim();
+  if(origenPaciente==='empresa') return empresa ? `Empresa: ${empresa}` : 'Empresa';
+  if(comoSeEntero==='Otro'){const otro=document.getElementById('otroComoSeEntero').value.trim();return otro?`Otro: ${otro}`:'Otro';}
+  return comoSeEntero;
+}
+
+/* ===================== DOCUMENTO ===================== */
+const tipoDocumento=document.getElementById('tipoDocumento');
+const numeroDocumento=document.getElementById('numeroDocumento');
+function actualizarReglasDocumento(){
+  const pasaporte=tipoDocumento.value==='PASAPORTE';
+  numeroDocumento.inputMode=pasaporte?'text':'numeric';
+  numeroDocumento.placeholder=pasaporte?'Ejemplo: AB123456':'Ejemplo: 1088123456';
+  document.getElementById('ayudaDocumento').textContent=pasaporte?'El pasaporte puede contener letras y números.':'Para CC, TI, CE y PPT solo se permiten números.';
+  sanitizarDocumento();
+}
+function sanitizarDocumento(){
+  numeroDocumento.value=tipoDocumento.value==='PASAPORTE'
+    ? numeroDocumento.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,20)
+    : numeroDocumento.value.replace(/\D/g,'').slice(0,15);
+}
+function validarNumeroDocumento(){
+  const v=numeroDocumento.value.trim(); if(!tipoDocumento.value || !v) return false;
+  return tipoDocumento.value==='PASAPORTE' ? /^[A-Z0-9]{4,20}$/.test(v) : /^\d{3,15}$/.test(v);
+}
+function mensajeDocumentoActual(){return tipoDocumento.value==='PASAPORTE'?'El pasaporte debe tener entre 4 y 20 letras o números.':'Este documento solo acepta números (entre 3 y 15 dígitos).';}
+tipoDocumento.addEventListener('change',()=>{actualizarReglasDocumento();resetearPanelOrden();});
+numeroDocumento.addEventListener('input',()=>{sanitizarDocumento();resetearPanelOrden();});
+
+/* ===================== CONSULTA AL SHEET MAESTRO ===================== */
+const CLAVE_CONSULTA_BRIGADA = 'vip2026';
+let ordenYaConsultada = false;
+
+function resetearPanelOrden(){
+  ordenYaConsultada = false;
+  document.getElementById('panelOrdenEncontrada').classList.add('oculto');
+  btnSiguiente.textContent = 'Siguiente →';
+}
+
+function renderizarOrdenEncontrada(data){
+  const persona = data.persona || {};
+  const pruebas = data.pruebas || [];
+  document.getElementById('tipoExamenOrden').textContent = persona.tipoExamen || 'No especificado';
+  document.getElementById('empresaOrdenTexto').textContent = persona.empresa || '—';
+  const lista = document.getElementById('listaExamenesOrden');
+  lista.innerHTML = '';
+  if(pruebas.length === 0){
+    lista.innerHTML = '<li>No hay pruebas registradas todavía para esta orden.</li>';
+  }else{
+    pruebas.forEach(p=>{
+      const li = document.createElement('li');
+      li.textContent = p.prueba + (p.estado ? ' — ' + p.estado : '');
+      lista.appendChild(li);
+    });
+  }
+}
+
+async function buscarOrdenEnSheetMaestro(){
+  const cargando = document.getElementById('cargandoOrden');
+  const panel = document.getElementById('panelOrdenEncontrada');
+  cargando.classList.remove('oculto');
+  panel.classList.add('oculto');
+  btnSiguiente.disabled = true;
+
+  try{
+    const url = URL_APPS_SCRIPT_ORDEN
+      + '?accion=buscarOrden'
+      + '&clave=' + encodeURIComponent(CLAVE_CONSULTA_BRIGADA)
+      + '&tipoDoc=' + encodeURIComponent(tipoDocumento.value)
+      + '&numDoc=' + encodeURIComponent(numeroDocumento.value.trim());
+    const respuesta = await fetch(url);
+    const data = await respuesta.json();
+
+    if(data && data.ok && data.encontrado){
+      renderizarOrdenEncontrada(data);
+      panel.classList.remove('oculto');
+      btnSiguiente.textContent = 'Continuar registro →';
+    }
+    // Si no está encontrado, o hay un error, seguimos de largo sin bloquear a recepción.
+  }catch(_error){
+    // Si falla la consulta (ej. sin internet un instante), no se bloquea el registro normal.
+  }finally{
+    cargando.classList.add('oculto');
+    btnSiguiente.disabled = false;
+    ordenYaConsultada = true;
+  }
+}
+
+/* ===================== NOMBRES SOLO LETRAS ===================== */
+const REGEX_NOMBRE=/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+(?:[ '\-][A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+)*$/;
+function limpiarNombreEntrada(valor){return valor.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ '\-]/g,'').replace(/\s{2,}/g,' ');}
+function capitalizarNombre(valor){return valor.toLowerCase().replace(/(^|[ '\-])([a-záéíóúüñ])/g,(_m,p,l)=>p+l.toUpperCase()).trim();}
+document.querySelectorAll('.solo-letras').forEach(c=>{
+  c.addEventListener('input',()=>{c.value=limpiarNombreEntrada(c.value);});
+  c.addEventListener('blur',()=>{c.value=capitalizarNombre(c.value);actualizarLugarNacimientoFinal();});
+});
+
+/* ===================== PAÍS, DEPARTAMENTO Y MUNICIPIO ===================== */
+const tipoPaisNacimiento=document.getElementById('tipoPaisNacimiento');
+const bloqueColombia=document.getElementById('nacimientoColombia');
+const bloqueExterior=document.getElementById('nacimientoExterior');
+const departamentoNacimiento=document.getElementById('departamentoNacimiento');
+const municipioNacimiento=document.getElementById('municipioNacimiento');
+Object.keys(MUNICIPIOS_POR_DEPARTAMENTO).forEach(dep=>{const op=document.createElement('option');op.value=dep;op.textContent=dep;departamentoNacimiento.appendChild(op);});
+function cambiarTipoPais(){
+  const esColombia=tipoPaisNacimiento.value==='COLOMBIA'; const esOtro=tipoPaisNacimiento.value==='OTRO';
+  bloqueColombia.classList.toggle('oculto',!esColombia);bloqueExterior.classList.toggle('oculto',!esOtro);
+  departamentoNacimiento.disabled=!esColombia;municipioNacimiento.disabled=!esColombia || !departamentoNacimiento.value;
+  document.getElementById('paisNacimientoOtro').disabled=!esOtro;document.getElementById('ciudadNacimientoOtro').disabled=!esOtro;
+  actualizarLugarNacimientoFinal();
+}
+function cargarMunicipios(){
+  const dep=departamentoNacimiento.value;municipioNacimiento.innerHTML='<option value="">Toque para elegir</option>';
+  (MUNICIPIOS_POR_DEPARTAMENTO[dep]||[]).forEach(m=>{const op=document.createElement('option');op.value=m;op.textContent=m;municipioNacimiento.appendChild(op);});
+  municipioNacimiento.disabled=!dep;actualizarLugarNacimientoFinal();
+}
+function actualizarLugarNacimientoFinal(){
+  let final='';
+  if(tipoPaisNacimiento.value==='COLOMBIA' && departamentoNacimiento.value && municipioNacimiento.value) final=`${municipioNacimiento.value} (${departamentoNacimiento.value}, COLOMBIA)`;
+  if(tipoPaisNacimiento.value==='OTRO'){const pais=document.getElementById('paisNacimientoOtro').value.trim();const ciudad=document.getElementById('ciudadNacimientoOtro').value.trim();if(pais&&ciudad) final=`${ciudad.toUpperCase()} (${pais.toUpperCase()})`;}
+  document.getElementById('ciudadNacimientoFinal').value=final;
+  const vista=document.getElementById('vistaLugarNacimiento');vista.textContent=final?`Se guardará como: ${final}`:'';vista.classList.toggle('oculto',!final);
+  return Boolean(final);
+}
+tipoPaisNacimiento.addEventListener('change',cambiarTipoPais);departamentoNacimiento.addEventListener('change',cargarMunicipios);municipioNacimiento.addEventListener('change',actualizarLugarNacimientoFinal);
+document.getElementById('paisNacimientoOtro').addEventListener('input',actualizarLugarNacimientoFinal);document.getElementById('ciudadNacimientoOtro').addEventListener('input',actualizarLugarNacimientoFinal);
+
+/* ===================== CORREO ===================== */
+const correo=document.getElementById('correo'); const correoCorreccion=document.getElementById('correoCorreccion');
+const DOMINIOS_CORRECCION={'gmial.com':'gmail.com','gamil.com':'gmail.com','gmail.co':'gmail.com','hotmial.com':'hotmail.com','hotmai.com':'hotmail.com','outlok.com':'outlook.com','outlook.co':'outlook.com','yaho.com':'yahoo.com'};
+function aplicarDominio(dominio){let local=(correo.value.split('@')[0]||'').trim();if(!local){correo.focus();return;}correo.value=local+'@'+dominio;actualizarSugerenciaCorreo();}
+document.querySelectorAll('.sugerencias-correo button').forEach(b=>b.addEventListener('click',()=>aplicarDominio(b.dataset.dominio)));
+function actualizarSugerenciaCorreo(){
+  correo.value=correo.value.replace(/\s/g,''); const partes=correo.value.split('@'); const dominio=(partes[1]||'').toLowerCase(); const correcto=DOMINIOS_CORRECCION[dominio];
+  if(correcto && partes[0]){const sugerido=partes[0]+'@'+correcto;correoCorreccion.textContent='¿Quiso decir '+sugerido+'?';correoCorreccion.dataset.valor=sugerido;correoCorreccion.classList.remove('oculto');}
+  else correoCorreccion.classList.add('oculto');
+}
+correo.addEventListener('input',actualizarSugerenciaCorreo);correoCorreccion.addEventListener('click',()=>{correo.value=correoCorreccion.dataset.valor||correo.value;correoCorreccion.classList.add('oculto');});
+function validarCorreo(){const v=correo.value.trim();return !v || /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(v);}
+
+/* ===================== CELULAR ===================== */
+const celular=document.getElementById('celular');celular.addEventListener('input',()=>{celular.value=celular.value.replace(/\D/g,'').slice(0,10);});
+function validarCelular(){return /^3\d{9}$/.test(celular.value.trim());}
+
+/* ===================== CÁMARA / FOTO ===================== */
+let fotoTomada = false;
+let streamCamara = null;
+const video = document.getElementById('video');
+const canvasFoto = document.getElementById('canvasFoto');
+const fotoResultado = document.getElementById('fotoResultado');
+const btnAbrirCamara = document.getElementById('btnAbrirCamara');
+const btnCapturar = document.getElementById('btnCapturar');
+const btnRepetirFoto = document.getElementById('btnRepetirFoto');
+let fotoBase64 = '';
+
+btnAbrirCamara.addEventListener('click', async () => {
+  try{
+    streamCamara = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+    video.srcObject = streamCamara;
+    video.style.display = 'block';
+    btnAbrirCamara.classList.add('oculto');
+    btnCapturar.classList.remove('oculto');
+    fotoResultado.style.display = 'none';
+    document.querySelector('.foto-box').classList.add('camara-activa');
+  }catch(e){
+    alert('No se pudo abrir la cámara. Revise los permisos de su navegador.');
+  }
+});
+
+btnCapturar.addEventListener('click', () => {
+  canvasFoto.width = video.videoWidth;
+  canvasFoto.height = video.videoHeight;
+  canvasFoto.getContext('2d').drawImage(video, 0, 0);
+  fotoBase64 = canvasFoto.toDataURL('image/jpeg', 0.85);
+  fotoResultado.src = fotoBase64;
+  fotoResultado.style.display = 'block';
+  video.style.display = 'none';
+  if(streamCamara) streamCamara.getTracks().forEach(t => t.stop());
+  btnCapturar.classList.add('oculto');
+  btnRepetirFoto.classList.remove('oculto');
+  fotoTomada = true;
+  document.getElementById('errorFoto').style.display = 'none';
+  document.querySelector('.foto-box').classList.remove('camara-activa');
+});
+
+btnRepetirFoto.addEventListener('click', () => {
+  fotoTomada = false;
+  fotoResultado.style.display = 'none';
+  btnRepetirFoto.classList.add('oculto');
+  btnAbrirCamara.classList.remove('oculto');
+});
+
+/* ===================== FIRMA ===================== */
+const firmaCanvas = document.getElementById('firmaCanvas');
+const ctxFirma = firmaCanvas.getContext('2d');
+let firmando = false;
+let firmaHecha = false;
+
+let canvasFirmaListo = false;
+function ajustarCanvasFirma(){
+  // Cambiar width/height de un canvas borra su contenido, así que solo lo hacemos
+  // la primera vez que el paso 6 se hace visible y su tamaño real ya es medible.
+  if(canvasFirmaListo) return;
+  const rect = firmaCanvas.getBoundingClientRect();
+  if(rect.width === 0 || rect.height === 0) return; // aún no es visible, reintentar luego
+  firmaCanvas.width = rect.width * 2;
+  firmaCanvas.height = rect.height * 2;
+  ctxFirma.scale(2,2);
+  // El canvas nace transparente (no blanco). Sin este relleno, al exportar a PNG
+  // las zonas sin dibujo quedan transparentes y se ven negras en otros sistemas (BIOFILE).
+  ctxFirma.fillStyle = '#FFFFFF';
+  ctxFirma.fillRect(0, 0, rect.width, rect.height);
+  ctxFirma.lineWidth = 2.5;
+  ctxFirma.lineCap = 'round';
+  ctxFirma.strokeStyle = '#0B5FA5';
+  canvasFirmaListo = true;
+}
+
+function posicion(e){
+  const rect = firmaCanvas.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  return {x,y};
+}
+function iniciarTrazo(e){
+  firmando = true;
+  const {x,y} = posicion(e);
+  ctxFirma.beginPath();
+  ctxFirma.moveTo(x,y);
+  e.preventDefault();
+}
+function trazar(e){
+  if(!firmando) return;
+  const {x,y} = posicion(e);
+  ctxFirma.lineTo(x,y);
+  ctxFirma.stroke();
+  firmaHecha = true;
+  e.preventDefault();
+}
+function terminarTrazo(){ firmando = false; }
+
+firmaCanvas.addEventListener('mousedown', iniciarTrazo);
+firmaCanvas.addEventListener('mousemove', trazar);
+window.addEventListener('mouseup', terminarTrazo);
+firmaCanvas.addEventListener('touchstart', iniciarTrazo, {passive:false});
+firmaCanvas.addEventListener('touchmove', trazar, {passive:false});
+firmaCanvas.addEventListener('touchend', terminarTrazo);
+
+document.getElementById('btnBorrarFirma').addEventListener('click', () => {
+  const rect = firmaCanvas.getBoundingClientRect();
+  ctxFirma.clearRect(0,0,firmaCanvas.width,firmaCanvas.height);
+  ctxFirma.fillStyle = '#FFFFFF';
+  ctxFirma.fillRect(0, 0, rect.width, rect.height);
+  firmaHecha = false;
+});
+
+/* ===================== ENVÍO ===================== */
+function formatearFechaHoraBogota(){
+  const ahora = new Date();
+  const opciones = { timeZone: 'America/Bogota', day:'numeric', month:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false };
+  const partes = new Intl.DateTimeFormat('es-CO', opciones).formatToParts(ahora);
+  const obj = {};
+  partes.forEach(p => obj[p.type] = p.value);
+  return `${obj.day}/${obj.month}/${obj.year}, ${obj.hour}:${obj.minute}`;
+}
+
+function enviarFormulario(){
+  // Última barrera de seguridad: nunca enviar sin foto ni firma, sin importar cómo se llegó aquí.
+  if(!fotoTomada || !fotoBase64){
+    alert('Falta tomar la foto. Por favor regrese al paso de foto y firma.');
+    pasoActual = 8;
+    mostrarPaso(8);
+    validarPaso(8);
+    return;
+  }
+  if(!firmaHecha){
+    alert('Falta la firma. Por favor regrese al paso de foto y firma.');
+    pasoActual = 8;
+    mostrarPaso(8);
+    validarPaso(8);
+    return;
+  }
+
+  const btnEnviar = document.getElementById('btnEnviar');
+  const mensajeEnviando = document.getElementById('mensajeEnviando');
+  btnEnviar.disabled = true;
+  mensajeEnviando.style.display = 'block';
+  navBotones.style.display = 'none';
+
+  actualizarResidenciaFinal();
+  const form = document.getElementById('formBrigada');
+  const datos = new FormData(form);
+  const crudo = {};
+  datos.forEach((valor, llave) => { crudo[llave] = valor; });
+
+  // Fecha de la cita: si es brigada programada, se arma con los 3 selects del paso 1
+  const fechaCitaBrigada = (tipoCita === 'brigada' && document.getElementById('citaDia').value)
+    ? document.getElementById('citaAnio').value + '-' + document.getElementById('citaMes').value + '-' + document.getElementById('citaDia').value
+    : "";
+
+  const nombreEmpresaOrigen = document.getElementById('nombreEmpresaOrigen').value.trim();
+  actualizarLugarNacimientoFinal();
+
+  // Limpieza final: evita espacios dobles o accidentales al copiar los datos a BIOFILE.
+  Object.keys(crudo).forEach(function(llave){
+    if(typeof crudo[llave] === 'string') crudo[llave] = crudo[llave].trim().replace(/\s+/g, ' ');
+  });
+
+  const objeto = {
+    fechaRegistro:    formatearFechaHoraBogota(),
+    tipoCita:         tipoCita === 'brigada' ? 'Brigada programada' : 'Hoy mismo (IPS)',
+    fechaCitaBrigada: fechaCitaBrigada,
+    origenPaciente:   origenPaciente === 'empresa' ? 'Empresa' : 'Particular',
+    comoSeEntero:     obtenerComoSeEnteroFinal(),
+    tipoDoc:          crudo.tipoDocumento || "",
+    numDoc:           crudo.numeroDocumento || "",
+    apellido1:        crudo.primerApellido || "",
+    apellido2:        crudo.segundoApellido || "",
+    nombre1:          crudo.primerNombre || "",
+    nombre2:          crudo.otrosNombres || "",
+    fechaNac:         (crudo.fnAnio && crudo.fnMes && crudo.fnDia) ? (crudo.fnAnio + "-" + crudo.fnMes + "-" + crudo.fnDia) : "",
+    ciudadNac:        crudo.ciudadNacimiento || "",
+    genero:           crudo.genero || "",
+    estadoCivil:      crudo.estadoCivil || "",
+    nivelEdu:         crudo.nivelEducativo || "",
+    correo:           crudo.correo || "",
+    zona:             crudo.localidad || "", // Compatibilidad: la columna Zona guarda la localidad
+    direccion:        crudo.direccion || "",
+    barrio:           crudo.barrio || "",
+    localidad:        crudo.localidad || "",
+    municipioResidencia: datosMunicipioResidencia().texto || "",
+    municipio:        "Bogotá D.C.",
+    estrato:          crudo.estrato || "",
+    celular:          crudo.celular || "",
+    telefono:         "",
+    acudiente:        "",
+    parentesco:       "",
+    telAcudiente:     "",
+    cargo:            "",
+    funciones:        "",
+    empresa:          nombreEmpresaOrigen || "",
+    eps:              obtenerAfiliacionFinal('eps'),
+    afp:              obtenerAfiliacionFinal('afp'),
+    arl:              obtenerAfiliacionFinal('arl'),
+    habeasData:       "SI",
+    declaracionVeraz: "SI",
+    fotoBase64:       fotoBase64,
+    firmaBase64:      firmaCanvas.toDataURL('image/png')
+  };
+
+  fetch(URL_APPS_SCRIPT, {
+    method: 'POST',
+    body: JSON.stringify(objeto),
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+  })
+  .then(async (respuesta) => {
+    const texto = await respuesta.text();
+    let data = null;
+    try{ data = texto ? JSON.parse(texto) : null; }catch(_e){ data = null; }
+
+    if(!respuesta.ok || (data && data.ok === false)){
+      throw new Error((data && (data.error || data.mensaje)) || 'El servidor no confirmó el registro.');
+    }
+
+    document.getElementById('nombreFinal').textContent = objeto.nombre1 || '';
+    document.querySelector('.progreso-wrap').classList.add('oculto');
+    form.classList.add('oculto');
+    document.getElementById('pantallaFinal').classList.remove('oculto');
+  })
+  .catch((error) => {
+    alert('No se pudo enviar el registro. ' + (error && error.message ? error.message : 'Revise su conexión e intente de nuevo.'));
+    btnEnviar.disabled = false;
+    mensajeEnviando.style.display = 'none';
+    navBotones.style.display = 'flex';
+  });
+}
+
+document.getElementById('btnEnviar').addEventListener('click', enviarFormulario);
+
+document.getElementById('btnOtroRegistro').addEventListener('click', () => {
+  window.location.reload();
+});
+
+mostrarPaso(1);
+</script>
+</body>
+</html>
