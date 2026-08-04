@@ -10,3 +10,9 @@
 - Los municipios y afiliaciones permanecen incorporados dentro del HTML.
 - Se incluye el logo local requerido por el formulario.
 - Se agrega configuración para GitHub y despliegue continuo en Netlify.
+
+
+## 1.1.0 — 2026-08-04
+- Se agregó favicon.ico y versiones 16x16, 32x32 y Apple Touch.
+- Se agregó manifest y control de caché para Netlify.
+- Se forzó la actualización del icono con versión `?v=2`.
