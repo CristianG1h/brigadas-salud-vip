@@ -58,3 +58,7 @@ Para probar la cámara, permita el acceso cuando el navegador lo solicite.
 ## Seguridad del repositorio
 
 Se recomienda crear el repositorio como **privado**. Las direcciones de Apps Script están incluidas en el JavaScript del navegador porque el formulario necesita utilizarlas, pero no deben agregarse contraseñas, archivos JSON de cuentas de servicio ni credenciales privadas al repositorio.
+
+## Verificación de acceso
+
+Conexión de escritura de GitHub verificada correctamente el 8 de agosto de 2026.
