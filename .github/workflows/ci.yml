@@ -23,15 +23,17 @@ jobs:
       - name: Verificar sintaxis de patches
         run: |
           node --check scripts/patch-paises-nacimiento.mjs
-          node --check scripts/patch-autocomplete-empresas-v2.mjs
+          node --check scripts/patch-autocomplete-empresas-v3.mjs
       - name: Aplicar build del formulario
         run: |
           node scripts/patch-paises-nacimiento.mjs
-          node scripts/patch-autocomplete-empresas-v2.mjs
+          node scripts/patch-autocomplete-empresas-v3.mjs
       - name: Verificar autocomplete instalado
         run: |
-          grep -q 'AUTOCOMPLETE_EMPRESAS_V2' index.html
+          grep -q 'AUTOCOMPLETE_EMPRESAS_V3' index.html
           grep -q 'sugerenciasEmpresa' index.html
           grep -q 'EMPRESA_AUTOCOMPLETE_PARTES' index.html
+          grep -q 'Una sola sugerencia por Acuerdo Comercial' index.html
+          grep -q 'Coincide con empresa en misión' index.html
           grep -q 'Puede elegir una sugerencia o escribir una empresa nueva' index.html
           grep -q 'relaciones-v67/parte-' index.html
