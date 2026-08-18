@@ -1,0 +1,37 @@
+name: Validar formulario de brigadas
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verificar sintaxis de patches
+        run: |
+          node --check scripts/patch-paises-nacimiento.mjs
+          node --check scripts/patch-autocomplete-empresas.mjs
+      - name: Aplicar build del formulario
+        run: |
+          node scripts/patch-paises-nacimiento.mjs
+          node scripts/patch-autocomplete-empresas.mjs
+      - name: Verificar autocomplete instalado
+        run: |
+          grep -q 'AUTOCOMPLETE_EMPRESAS_V1' index.html
+          grep -q 'sugerenciasEmpresa' index.html
+          grep -q 'EMPRESAS_RELACIONES_URLS' index.html
+          grep -q 'Puede elegir una sugerencia o escribir una empresa nueva' index.html
+          grep -q 'relaciones-v67/parte-' index.html
