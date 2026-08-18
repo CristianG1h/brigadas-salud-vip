@@ -1,5 +1,5 @@
 [build]
-  command = "node scripts/patch-paises-nacimiento.mjs && node scripts/patch-autocomplete-empresas.mjs"
+  command = "node scripts/patch-paises-nacimiento.mjs && node scripts/patch-autocomplete-empresas-v2.mjs"
   publish = "."
 
 [[headers]]
