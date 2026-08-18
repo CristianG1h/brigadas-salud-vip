@@ -25,15 +25,20 @@ jobs:
           node --check scripts/patch-paises-nacimiento.mjs
           node --check scripts/patch-autocomplete-empresas-v3.mjs
           node --check scripts/patch-autocomplete-empresas-v4.mjs
+          node --check scripts/patch-autocomplete-empresas-v5.mjs
       - name: Aplicar build del formulario
         run: |
           node scripts/patch-paises-nacimiento.mjs
           node scripts/patch-autocomplete-empresas-v3.mjs
           node scripts/patch-autocomplete-empresas-v4.mjs
+          node scripts/patch-autocomplete-empresas-v5.mjs
       - name: Verificar autocomplete y relación instalados
         run: |
           grep -q 'AUTOCOMPLETE_EMPRESAS_V3' index.html
           grep -q 'AUTOCOMPLETE_EMPRESAS_V4_RELACION' index.html
+          grep -q 'AUTOCOMPLETE_EMPRESAS_V5_MISION_CANONICA' index.html
+          grep -q 'misionCanonicaParaAcuerdo' index.html
+          grep -q 'misiones.length===1' index.html
           grep -q 'sugerenciasEmpresa' index.html
           grep -q 'empresaRelacionSeleccionada' index.html
           grep -q 'acuerdoComercialOrigen' index.html
