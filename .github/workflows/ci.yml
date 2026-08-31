@@ -27,6 +27,7 @@ jobs:
           node --check scripts/patch-autocomplete-empresas-v4.mjs
           node --check scripts/patch-autocomplete-empresas-v5.mjs
           node --check scripts/patch-autocomplete-empresas-v6.mjs
+          node --check scripts/patch-precarga-paquetes-v7.mjs
       - name: Aplicar build del formulario
         run: |
           node scripts/patch-paises-nacimiento.mjs
@@ -34,12 +35,16 @@ jobs:
           node scripts/patch-autocomplete-empresas-v4.mjs
           node scripts/patch-autocomplete-empresas-v5.mjs
           node scripts/patch-autocomplete-empresas-v6.mjs
+          node scripts/patch-precarga-paquetes-v7.mjs
       - name: Verificar autocomplete y relación instalados
         run: |
           grep -q 'AUTOCOMPLETE_EMPRESAS_V3' index.html
           grep -q 'AUTOCOMPLETE_EMPRESAS_V4_RELACION' index.html
           grep -q 'AUTOCOMPLETE_EMPRESAS_V5_MISION_CANONICA' index.html
           grep -q 'AUTOCOMPLETE_EMPRESAS_V6_SELF_SIMILAR' index.html
+          grep -q 'PRECARGA_PAQUETES_BIOFILE_V7' index.html
+          grep -q '/api/catalogo/precargar' index.html
+          grep -q 'precargarPaquetesBiofileV7' index.html
           grep -q 'mismoNombreEmpresaV6' index.html
           grep -q 'misionCanonicaParaAcuerdo' index.html
           grep -q 'misiones.length===1' index.html
