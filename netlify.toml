@@ -1,5 +1,5 @@
 [build]
-  command = "node scripts/patch-paises-nacimiento.mjs && node scripts/patch-autocomplete-empresas-v3.mjs && node scripts/patch-autocomplete-empresas-v4.mjs && node scripts/patch-autocomplete-empresas-v5.mjs && node scripts/patch-autocomplete-empresas-v6.mjs"
+  command = "node scripts/patch-paises-nacimiento.mjs && node scripts/patch-autocomplete-empresas-v3.mjs && node scripts/patch-autocomplete-empresas-v4.mjs && node scripts/patch-autocomplete-empresas-v5.mjs && node scripts/patch-autocomplete-empresas-v6.mjs && node scripts/patch-precarga-paquetes-v7.mjs"
   publish = "."
 
 [[headers]]
