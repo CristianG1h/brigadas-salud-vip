@@ -2,7 +2,7 @@
 
 Formulario web de registro para las brigadas de **VIP Salud Ocupacional**. El proyecto funciona como sitio estático, está conectado a GitHub y puede publicarse automáticamente en **Netlify**.
 
-> **Documentación actualizada: 12 de agosto de 2026.**
+> **Documentación actualizada: 31 de agosto de 2026.**
 
 ## Objetivo
 
@@ -21,6 +21,12 @@ Actualmente incluye:
 - envío de la información mediante Google Apps Script;
 - diseño responsive para computador y celular;
 - identidad gráfica de VIP Salud Ocupacional.
+
+## Precarga del catálogo BIOFILE
+
+Cuando el paciente registra una empresa y Apps Script confirma que el formulario fue guardado correctamente, el navegador envía una notificación no bloqueante al backend BIOFILE. El backend utiliza el **Acuerdo Comercial** canónico seleccionado por el autocompletado y prepara en segundo plano el catálogo de paquetes de esa empresa.
+
+La pantalla final del paciente no espera esta investigación. Si la empresa ya tiene un catálogo vigente, no se consulta BIOFILE de nuevo; si requiere actualización, queda en la cola de catálogo para que el Panel de Gestión pueda mostrar los paquetes disponibles desde el primer momento.
 
 ## Flujo general
 
