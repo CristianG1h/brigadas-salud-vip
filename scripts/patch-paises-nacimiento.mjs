@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 
 const archivo=new URL('../index.html',import.meta.url);
-let html=fs.readFileSync(archivo,'utf8');
+let html=fs.readFileSync(archivo,'utf8').replace(/\r\n/g,'\n');
 if(!html.includes('/* PAISES_NACIMIENTO_V5 */')){
   const selectInicio='<select id="tipoPaisNacimiento" required>';
   const a=html.indexOf(selectInicio);
@@ -20,7 +20,7 @@ if(!html.includes('/* PAISES_NACIMIENTO_V5 */')){
         <input type="text" id="paisNacimientoOtro" readonly tabindex="-1">
         <label for="ciudadNacimientoOtro">Ciudad o pueblo donde nació <span class="req">*</span></label>
         <input type="text" id="ciudadNacimientoOtro" class="solo-letras" placeholder="Ejemplo: Caracas" maxlength="80">
-        <div class="ayuda">Si BIOFILE no encuentra esta ciudad, el robot intentará automáticamente la capital del país.</div>
+        <div class="ayuda">Escriba la ciudad real de nacimiento. Si BIOFILE no la encuentra, se usará Bogotá y recepción verá una advertencia del cambio.</div>
       </div>`;
   if(!html.includes(bloqueViejo))throw new Error('No se encontró bloque de nacimiento exterior.');
   html=html.replace(bloqueViejo,bloqueNuevo);
